@@ -29,6 +29,7 @@ from .stop_transmission import StopTransmission
 class Utilities(
     AddHandler,
     ExportSessionString,
+    Ping,
     RemoveHandler,
     Restart,
     Run,
