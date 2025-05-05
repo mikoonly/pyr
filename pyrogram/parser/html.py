@@ -178,6 +178,10 @@ class HTML:
                 language = getattr(entity, "language", "") or ""
                 start_tag = f'<{name} language="{language}">' if language else f"<{name}>"
                 end_tag = f"</{name}>"
+            elif entity_type == MessageEntityType.EXPANDABLE_BLOCKQUOTE:
+                name = "blockquote"
+                start_tag = f"<{name} expandable>"
+                end_tag = f"</{name}>"
             elif entity_type in (
                 MessageEntityType.CODE,
                 MessageEntityType.BLOCKQUOTE,
