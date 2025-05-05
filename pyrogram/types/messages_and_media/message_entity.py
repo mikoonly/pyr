@@ -64,6 +64,7 @@ class MessageEntity(Object):
         user: "types.User" = None,
         language: str = None,
         custom_emoji_id: int = None
+        collapsed: bool = None
     ):
         super().__init__(client)
 
@@ -74,6 +75,7 @@ class MessageEntity(Object):
         self.user = user
         self.language = language
         self.custom_emoji_id = custom_emoji_id
+        self.collapsed = collapsed
 
     @staticmethod
     def _parse(client, entity: "raw.base.MessageEntity", users: dict) -> Optional["MessageEntity"]:
@@ -94,6 +96,7 @@ class MessageEntity(Object):
             user=types.User._parse(client, users.get(user_id, None)),
             language=getattr(entity, "language", None),
             custom_emoji_id=getattr(entity, "document_id", None),
+            collapsed=getattr(entity, "collapsed", None),
             client=client
         )
 
@@ -115,6 +118,12 @@ class MessageEntity(Object):
         args.pop("custom_emoji_id")
         if self.custom_emoji_id is not None:
             args["document_id"] = self.custom_emoji_id
+
+        if self.type not in [
+             enums.MessageEntityType.BLOCKQUOTE,
+             enums.MessageEntityType.EXPANDABLE_BLOCKQUOTE
+         ]:
+             args.pop("collapsed")
 
         entity = self.type.value
 
