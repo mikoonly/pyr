@@ -51,6 +51,9 @@ class MessageEntity(Object):
         custom_emoji_id (``int``, *optional*):
             For :obj:`~pyrogram.enums.MessageEntityType.CUSTOM_EMOJI` only, unique identifier of the custom emoji.
             Use :meth:`~pyrogram.Client.get_custom_emoji_stickers` to get full information about the sticker.
+            
+        collapsed (``bool``, *optional*):
+             For :obj:`~pyrogram.enums.MessageEntityType.BLOCKQUOTE` only, whether the blockquote expandable.
     """
 
     def __init__(
@@ -63,7 +66,7 @@ class MessageEntity(Object):
         url: str = None,
         user: "types.User" = None,
         language: str = None,
-        custom_emoji_id: int = None
+        custom_emoji_id: int = None,
         collapsed: bool = None
     ):
         super().__init__(client)
