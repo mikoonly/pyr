@@ -1,20 +1,21 @@
-#  Pyrogram - Telegram MTProto API Client Library for Python
+#  Pyrofork - Telegram MTProto API Client Library for Python
 #  Copyright (C) 2017-present Dan <https://github.com/delivrance>
+#  Copyright (C) 2022-present Mayuri-Chan <https://github.com/Mayuri-Chan>
 #
-#  This file is part of Pyrogram.
+#  This file is part of Pyrofork.
 #
-#  Pyrogram is free software: you can redistribute it and/or modify
+#  Pyrofork is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as published
 #  by the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Pyrogram is distributed in the hope that it will be useful,
+#  Pyrofork is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU Lesser General Public License for more details.
 #
 #  You should have received a copy of the GNU Lesser General Public License
-#  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
 from typing import List, Dict, Type
@@ -50,6 +51,13 @@ class Sticker(Object):
         is_video (``bool``):
             True, if the sticker is a video sticker
 
+        needs_repainting (``bool``, *optional*):
+            True, if the sticker needs repainting.
+            if the sticker can repainted to a text color in messages,
+            the color of the Telegram Premium badge in emoji status,
+            white color on chat photos, or another appropriate color in other places.
+            Only applicable to custom emoji stickers.
+
         file_name (``str``, *optional*):
             Sticker file name.
 
@@ -84,6 +92,7 @@ class Sticker(Object):
         height: int,
         is_animated: bool,
         is_video: bool,
+        needs_repainting: bool = False,
         file_name: str = None,
         mime_type: str = None,
         file_size: int = None,
@@ -104,6 +113,7 @@ class Sticker(Object):
         self.height = height
         self.is_animated = is_animated
         self.is_video = is_video
+        self.needs_repainting = needs_repainting
         self.emoji = emoji
         self.set_name = set_name
         self.thumbs = thumbs
@@ -135,7 +145,7 @@ class Sticker(Object):
             Sticker.cache[(set_id, set_access_hash)] = name
 
             if len(Sticker.cache) > 250:
-                for i in range(50):
+                for _ in range(50):
                     Sticker.cache.pop(next(iter(Sticker.cache)))
 
             return name
@@ -166,6 +176,11 @@ class Sticker(Object):
         else:
             set_name = None
 
+        if isinstance(sticker_attributes, raw.types.DocumentAttributeCustomEmoji):
+            needs_repainting = sticker_attributes.text_color
+        else:
+            needs_repainting = None
+
         return Sticker(
             file_id=FileId(
                 file_type=FileType.STICKER,
@@ -194,6 +209,7 @@ class Sticker(Object):
             ),
             is_animated=sticker.mime_type == "application/x-tgsticker",
             is_video=sticker.mime_type == "video/webm",
+            needs_repainting=needs_repainting,
             # TODO: mask_position
             set_name=set_name,
             emoji=sticker_attributes.alt or None,
