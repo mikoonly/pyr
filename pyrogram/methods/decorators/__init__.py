@@ -29,6 +29,7 @@ from .on_poll import OnPoll
 from .on_raw_update import OnRawUpdate
 from .on_user_status import OnUserStatus
 from .on_story import OnStory
+from .on_error import OnError
 
 
 class Decorators(
@@ -44,6 +45,7 @@ class Decorators(
     OnChosenInlineResult,
     OnChatMemberUpdated,
     OnChatJoinRequest,
-    OnStory
+    OnStory,
+    OnError
 ):
     pass
