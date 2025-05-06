@@ -28,6 +28,7 @@ from .password import Password
 from .premium import Premium
 from .users import Users
 from .stories import Stories
+from .stickers import Stickers
 from .utilities import Utilities
 
 
@@ -41,6 +42,7 @@ class Methods(
     Chats,
     Users,
     Stories,
+    Stickers,
     Messages,
     Decorators,
     Utilities,
