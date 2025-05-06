@@ -39,6 +39,7 @@ from .poll import Poll
 from .poll_option import PollOption
 from .reaction import Reaction
 from .sticker import Sticker
+from .sticker_set import StickerSet
 from .stripped_thumbnail import StrippedThumbnail
 from .story import Story
 from .story_deleted import StoryDeleted
