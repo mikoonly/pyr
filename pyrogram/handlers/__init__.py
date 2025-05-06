@@ -29,3 +29,4 @@ from .poll_handler import PollHandler
 from .raw_update_handler import RawUpdateHandler
 from .story_handler import StoryHandler
 from .user_status_handler import UserStatusHandler
+from .error_handler import ErrorHandler
