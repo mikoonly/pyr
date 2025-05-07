@@ -435,7 +435,7 @@ class Message(Object, Update):
         forwards: int = None,
         via_bot: "types.User" = None,
         outgoing: bool = None,
-        quote: bool = None,
+       # quote: bool = None,
         matches: List[Match] = None,
         command: List[str] = None,
         forum_topic_created: "types.ForumTopicCreated" = None,
@@ -528,7 +528,7 @@ class Message(Object, Update):
         self.forwards = forwards
         self.via_bot = via_bot
         self.outgoing = outgoing
-        self.quote = quote
+   #     self.quote = quote
         self.matches = matches
         self.command = command
         self.reply_markup = reply_markup
