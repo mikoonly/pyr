@@ -19,14 +19,12 @@
 from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetBoostsStatus:
     async def get_boosts_status(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str]
+        self: "pyrogram.Client", chat_id: Union[int, str]
     ) -> bool:
         """Get boosts status of channel
 

@@ -38,7 +38,7 @@ class UpdateFolder:
         exclude_muted: bool = None,
         exclude_read: bool = None,
         exclude_archived: bool = None,
-        emoji: str = None
+        emoji: str = None,
     ) -> bool:
         """Create or update a user's folder.
 
@@ -67,16 +67,13 @@ class UpdateFolder:
                     id=folder_id,
                     title=title,
                     pinned_peers=[
-                        await self.resolve_peer(user_id)
-                        for user_id in pinned_peers
+                        await self.resolve_peer(user_id) for user_id in pinned_peers
                     ],
                     include_peers=[
-                        await self.resolve_peer(user_id)
-                        for user_id in included_peers
+                        await self.resolve_peer(user_id) for user_id in included_peers
                     ],
                     exclude_peers=[
-                        await self.resolve_peer(user_id)
-                        for user_id in excluded_peers
+                        await self.resolve_peer(user_id) for user_id in excluded_peers
                     ],
                     contacts=contacts,
                     non_contacts=non_contacts,
@@ -86,8 +83,8 @@ class UpdateFolder:
                     exclude_muted=exclude_muted,
                     exclude_read=exclude_read,
                     exclude_archived=exclude_archived,
-                    emoticon=emoji
-                )
+                    emoticon=emoji,
+                ),
             )
         )
 

@@ -19,8 +19,7 @@
 from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class ExportChatInviteLink:
@@ -57,8 +56,7 @@ class ExportChatInviteLink:
         """
         r = await self.invoke(
             raw.functions.messages.ExportChatInvite(
-                peer=await self.resolve_peer(chat_id),
-                legacy_revoke_permanent=True
+                peer=await self.resolve_peer(chat_id), legacy_revoke_permanent=True
             )
         )
 

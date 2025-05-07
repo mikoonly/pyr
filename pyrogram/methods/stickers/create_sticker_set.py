@@ -18,12 +18,10 @@
 
 import os
 import re
-from typing import Union, Optional
+from typing import Optional, Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import raw, types, utils
 from pyrogram.file_id import FileId, FileType
 
 
@@ -35,7 +33,7 @@ class CreateStickerSet:
         sticker: str,
         user_id: Union[int, str] = None,
         emoji: str = "🤔",
-        masks: bool = None
+        masks: bool = None,
     ) -> Optional["types.Message"]:
         """Create a new stickerset.
 
@@ -86,9 +84,11 @@ class CreateStickerSet:
                     user_id or "me",
                     sticker,
                     force_document=True,
-                    disable_notification=True
+                    disable_notification=True,
                 )
-                uploaded_media = utils.get_input_media_from_file_id(document.document.file_id, FileType.DOCUMENT)
+                uploaded_media = utils.get_input_media_from_file_id(
+                    document.document.file_id, FileType.DOCUMENT
+                )
                 media = uploaded_media.id
                 _ = await document.delete()
             else:
@@ -96,16 +96,15 @@ class CreateStickerSet:
                 media = raw.types.InputDocument(
                     id=decoded.media_id,
                     access_hash=decoded.access_hash,
-                    file_reference=decoded.file_reference
+                    file_reference=decoded.file_reference,
                 )
         else:
             document = await self.send_document(
-                user_id or "me",
-                sticker,
-                force_document=True,
-                disable_notification=True
+                user_id or "me", sticker, force_document=True, disable_notification=True
             )
-            uploaded_media = utils.get_input_media_from_file_id(document.document.file_id, FileType.DOCUMENT)
+            uploaded_media = utils.get_input_media_from_file_id(
+                document.document.file_id, FileType.DOCUMENT
+            )
             media = uploaded_media.id
             _ = await document.delete()
 
@@ -114,13 +113,8 @@ class CreateStickerSet:
                 user_id=await self.resolve_peer(user_id or "me"),
                 title=title,
                 short_name=short_name,
-                stickers=[
-                    raw.types.InputStickerSetItem(
-                        document=media,
-                        emoji=emoji
-                    )
-                ],
-                masks=masks
+                stickers=[raw.types.InputStickerSetItem(document=media, emoji=emoji)],
+                masks=masks,
             )
         )
 

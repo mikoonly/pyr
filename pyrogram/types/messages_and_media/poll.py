@@ -17,11 +17,11 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 import pyrogram
-from pyrogram import raw, enums, utils
-from pyrogram import types
+from pyrogram import enums, raw, types, utils
+
 from ..object import Object
 from ..update import Update
 
@@ -113,7 +113,10 @@ class Poll(Object, Update):
         self.close_date = close_date
 
     @staticmethod
-    def _parse(client, media_poll: Union["raw.types.MessageMediaPoll", "raw.types.UpdateMessagePoll"]) -> "Poll":
+    def _parse(
+        client,
+        media_poll: Union["raw.types.MessageMediaPoll", "raw.types.UpdateMessagePoll"],
+    ) -> "Poll":
         poll: raw.types.Poll = media_poll.poll
         poll_results: raw.types.PollResults = media_poll.results
         results: List[raw.types.PollAnswerVoters] = poll_results.results
@@ -140,7 +143,7 @@ class Poll(Object, Update):
                     text=answer.text,
                     voter_count=voter_count,
                     data=answer.option,
-                    client=client
+                    client=client,
                 )
             )
 
@@ -156,13 +159,17 @@ class Poll(Object, Update):
             chosen_option_id=chosen_option_id,
             correct_option_id=correct_option_id,
             explanation=poll_results.solution,
-            explanation_entities=[
-                types.MessageEntity._parse(client, i, {})
-                for i in poll_results.solution_entities
-            ] if poll_results.solution_entities else None,
+            explanation_entities=(
+                [
+                    types.MessageEntity._parse(client, i, {})
+                    for i in poll_results.solution_entities
+                ]
+                if poll_results.solution_entities
+                else None
+            ),
             open_period=poll.close_period,
             close_date=utils.timestamp_to_datetime(poll.close_date),
-            client=client
+            client=client,
         )
 
     @staticmethod
@@ -187,7 +194,7 @@ class Poll(Object, Update):
                     text="",
                     voter_count=result.voters,
                     data=result.option,
-                    client=client
+                    client=client,
                 )
             )
 
@@ -199,5 +206,5 @@ class Poll(Object, Update):
             is_closed=False,
             chosen_option_id=chosen_option_id,
             correct_option_id=correct_option_id,
-            client=client
+            client=client,
         )

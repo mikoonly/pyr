@@ -17,10 +17,11 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from typing import Union, Dict
+from typing import Dict, Union
 
 import pyrogram
-from pyrogram import raw, types, utils, enums
+from pyrogram import enums, raw, types, utils
+
 from ..object import Object
 
 
@@ -111,7 +112,7 @@ class ChatMember(Object):
         client: "pyrogram.Client",
         member: Union["raw.base.ChatParticipant", "raw.base.ChannelParticipant"],
         users: Dict[int, "raw.base.User"],
-        chats: Dict[int, "raw.base.Chat"]
+        chats: Dict[int, "raw.base.Chat"],
     ) -> "ChatMember":
         # Chat participants
         if isinstance(member, raw.types.ChatParticipant):
@@ -120,7 +121,7 @@ class ChatMember(Object):
                 user=types.User._parse(client, users[member.user_id]),
                 joined_date=utils.timestamp_to_datetime(member.date),
                 invited_by=types.User._parse(client, users[member.inviter_id]),
-                client=client
+                client=client,
             )
         elif isinstance(member, raw.types.ChatParticipantAdmin):
             return ChatMember(
@@ -128,13 +129,13 @@ class ChatMember(Object):
                 user=types.User._parse(client, users[member.user_id]),
                 joined_date=utils.timestamp_to_datetime(member.date),
                 invited_by=types.User._parse(client, users[member.inviter_id]),
-                client=client
+                client=client,
             )
         elif isinstance(member, raw.types.ChatParticipantCreator):
             return ChatMember(
                 status=enums.ChatMemberStatus.OWNER,
                 user=types.User._parse(client, users[member.user_id]),
-                client=client
+                client=client,
             )
 
         # Channel participants
@@ -143,7 +144,7 @@ class ChatMember(Object):
                 status=enums.ChatMemberStatus.MEMBER,
                 user=types.User._parse(client, users[member.user_id]),
                 joined_date=utils.timestamp_to_datetime(member.date),
-                client=client
+                client=client,
             )
         elif isinstance(member, raw.types.ChannelParticipantAdmin):
             return ChatMember(
@@ -153,12 +154,13 @@ class ChatMember(Object):
                 promoted_by=types.User._parse(client, users[member.promoted_by]),
                 invited_by=(
                     types.User._parse(client, users[member.inviter_id])
-                    if member.inviter_id else None
+                    if member.inviter_id
+                    else None
                 ),
                 custom_title=member.rank,
                 can_be_edited=member.can_edit,
                 privileges=types.ChatPrivileges._parse(member.admin_rights),
-                client=client
+                client=client,
             )
         elif isinstance(member, raw.types.ChannelParticipantBanned):
             peer = member.peer
@@ -166,12 +168,14 @@ class ChatMember(Object):
 
             user = (
                 types.User._parse(client, users[peer_id])
-                if isinstance(peer, raw.types.PeerUser) else None
+                if isinstance(peer, raw.types.PeerUser)
+                else None
             )
 
             chat = (
                 types.Chat._parse_chat(client, chats[peer_id])
-                if not isinstance(peer, raw.types.PeerUser) else None
+                if not isinstance(peer, raw.types.PeerUser)
+                else None
             )
 
             return ChatMember(
@@ -187,7 +191,7 @@ class ChatMember(Object):
                 is_member=not member.left,
                 restricted_by=types.User._parse(client, users[member.kicked_by]),
                 permissions=types.ChatPermissions._parse(member.banned_rights),
-                client=client
+                client=client,
             )
         elif isinstance(member, raw.types.ChannelParticipantCreator):
             return ChatMember(
@@ -195,7 +199,7 @@ class ChatMember(Object):
                 user=types.User._parse(client, users[member.user_id]),
                 custom_title=member.rank,
                 privileges=types.ChatPrivileges._parse(member.admin_rights),
-                client=client
+                client=client,
             )
         elif isinstance(member, raw.types.ChannelParticipantLeft):
             peer = member.peer
@@ -203,19 +207,18 @@ class ChatMember(Object):
 
             user = (
                 types.User._parse(client, users[peer_id])
-                if isinstance(peer, raw.types.PeerUser) else None
+                if isinstance(peer, raw.types.PeerUser)
+                else None
             )
 
             chat = (
                 types.Chat._parse_chat(client, chats[peer_id])
-                if not isinstance(peer, raw.types.PeerUser) else None
+                if not isinstance(peer, raw.types.PeerUser)
+                else None
             )
 
             return ChatMember(
-                status=enums.ChatMemberStatus.LEFT,
-                user=user,
-                chat=chat,
-                client=client
+                status=enums.ChatMemberStatus.LEFT, user=user, chat=chat, client=client
             )
         elif isinstance(member, raw.types.ChannelParticipantSelf):
             return ChatMember(
@@ -223,5 +226,5 @@ class ChatMember(Object):
                 user=types.User._parse(client, users[member.user_id]),
                 joined_date=utils.timestamp_to_datetime(member.date),
                 invited_by=types.User._parse(client, users[member.inviter_id]),
-                client=client
+                client=client,
             )

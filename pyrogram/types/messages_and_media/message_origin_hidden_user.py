@@ -37,6 +37,7 @@ class MessageOriginHiddenUser(MessageOrigin):
         sender_user_name (``str``):
             Name of the user that sent the message originally.
     """
+
     def __init__(
         self,
         *,
@@ -44,9 +45,6 @@ class MessageOriginHiddenUser(MessageOrigin):
         date: datetime = None,
         sender_user_name: str = None
     ):
-        super().__init__(
-            type=type,
-            date=date
-        )
+        super().__init__(type=type, date=date)
 
         self.sender_user_name = sender_user_name

@@ -18,8 +18,9 @@
 
 import pyrogram
 from pyrogram import raw, types
-from .inline_query_result import InlineQueryResult
+
 from ...file_id import FileId
+from .inline_query_result import InlineQueryResult
 
 
 class InlineQueryResultCachedSticker(InlineQueryResult):
@@ -48,7 +49,7 @@ class InlineQueryResultCachedSticker(InlineQueryResult):
         sticker_file_id: str,
         id: str = None,
         reply_markup: "types.InlineKeyboardMarkup" = None,
-        input_message_content: "types.InputMessageContent" = None
+        input_message_content: "types.InputMessageContent" = None,
     ):
         super().__init__("sticker", id, input_message_content, reply_markup)
 
@@ -71,8 +72,12 @@ class InlineQueryResultCachedSticker(InlineQueryResult):
                 await self.input_message_content.write(client, self.reply_markup)
                 if self.input_message_content
                 else raw.types.InputBotInlineMessageMediaAuto(
-                    reply_markup=await self.reply_markup.write(client) if self.reply_markup else None,
+                    reply_markup=(
+                        await self.reply_markup.write(client)
+                        if self.reply_markup
+                        else None
+                    ),
                     message="",
                 )
-            )
+            ),
         )

@@ -27,7 +27,7 @@ class TranslateText:
         self: "pyrogram.Client",
         to_language_code: str,
         chat_id: Union[int, str],
-        message_ids: Union[int, list[int]]
+        message_ids: Union[int, list[int]],
     ) -> Union["types.TranslatedText", list["types.TranslatedText"]]:
         """Extracts text or caption of the given message and translates it to the given language. If the current user is a Telegram Premium user, then text formatting is preserved.
 
@@ -57,28 +57,22 @@ class TranslateText:
 
         r = await self.invoke(
             raw.functions.messages.TranslateText(
-                to_lang=to_language_code,
-                peer=await self.resolve_peer(chat_id),
-                id=ids
+                to_lang=to_language_code, peer=await self.resolve_peer(chat_id), id=ids
             )
         )
 
         return (
             types.TranslatedText._parse(self, r.result[0])
             if len(r.result) == 1
-            else [
-                types.TranslatedText._parse(self, i)
-                for i in r.result
-            ]
+            else [types.TranslatedText._parse(self, i) for i in r.result]
         )
-
 
     async def translate_text(
         self: "pyrogram.Client",
         to_language_code: str,
         text: str,
         parse_mode: Optional["enums.ParseMode"] = None,
-        entities: list["types.MessageEntity"] = None
+        entities: list["types.MessageEntity"] = None,
     ) -> Union["types.TranslatedText", list["types.TranslatedText"]]:
         """Translates a text to the given language. If the current user is a Telegram Premium user, then text formatting is preserved.
 
@@ -109,31 +103,20 @@ class TranslateText:
                 await app.translate_text("fa", "Pyrogram")
         """
         message, entities = (
-            await utils.parse_text_entities(
-                self,
-                text,
-                parse_mode,
-                entities
-            )
+            await utils.parse_text_entities(self, text, parse_mode, entities)
         ).values()
 
         r = await self.invoke(
             raw.functions.messages.TranslateText(
                 to_lang=to_language_code,
                 text=[
-                    raw.types.TextWithEntities(
-                        text=message,
-                        entities=entities or []
-                    )
-                ]
+                    raw.types.TextWithEntities(text=message, entities=entities or [])
+                ],
             )
         )
 
         return (
             types.TranslatedText._parse(self, r.result[0])
             if len(r.result) == 1
-            else [
-                types.TranslatedText._parse(self, i)
-                for i in r.result
-            ]
+            else [types.TranslatedText._parse(self, i) for i in r.result]
         )

@@ -17,8 +17,8 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
 from ..object import Object
 
 
@@ -154,7 +154,7 @@ class WebPage(Object):
         webpage: "raw.types.WebPage",
         force_large_media: bool = None,
         force_small_media: bool = None,
-        manual: bool = None
+        manual: bool = None,
     ) -> "WebPage":
         audio = None
         document = None
@@ -171,9 +171,9 @@ class WebPage(Object):
             attributes = {type(i): i for i in doc.attributes}
 
             file_name = getattr(
-                attributes.get(
-                    raw.types.DocumentAttributeFilename, None
-                ), "file_name", None
+                attributes.get(raw.types.DocumentAttributeFilename, None),
+                "file_name",
+                None,
             )
 
             if raw.types.DocumentAttributeAudio in attributes:
@@ -181,8 +181,12 @@ class WebPage(Object):
                 audio = types.Audio._parse(client, doc, audio_attributes, file_name)
 
             elif raw.types.DocumentAttributeAnimated in attributes:
-                video_attributes = attributes.get(raw.types.DocumentAttributeVideo, None)
-                animation = types.Animation._parse(client, doc, video_attributes, file_name)
+                video_attributes = attributes.get(
+                    raw.types.DocumentAttributeVideo, None
+                )
+                animation = types.Animation._parse(
+                    client, doc, video_attributes, file_name
+                )
 
             elif raw.types.DocumentAttributeVideo in attributes:
                 video_attributes = attributes[raw.types.DocumentAttributeVideo]
@@ -213,5 +217,5 @@ class WebPage(Object):
             force_small_media=force_small_media,
             manual=manual,
             duration=webpage.duration,
-            author=webpage.author
+            author=webpage.author,
         )

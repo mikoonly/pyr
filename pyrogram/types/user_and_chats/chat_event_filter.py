@@ -17,6 +17,7 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyrogram import raw
+
 from ..object import Object
 
 
@@ -72,7 +73,8 @@ class ChatEventFilter(Object):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         new_restrictions: bool = False,
         new_privileges: bool = False,
         new_members: bool = False,
@@ -171,5 +173,5 @@ class ChatEventFilter(Object):
             edit=edit,
             delete=delete,
             group_call=group_call,
-            invites=invites
+            invites=invites,
         )

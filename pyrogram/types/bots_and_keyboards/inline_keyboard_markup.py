@@ -19,8 +19,8 @@
 from typing import List
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
 from ..object import Object
 
 
@@ -49,9 +49,7 @@ class InlineKeyboardMarkup(Object):
 
             inline_keyboard.append(row)
 
-        return InlineKeyboardMarkup(
-            inline_keyboard=inline_keyboard
-        )
+        return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
     async def write(self, client: "pyrogram.Client"):
         rows = []

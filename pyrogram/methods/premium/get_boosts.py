@@ -16,11 +16,9 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetBoosts:
@@ -40,9 +38,7 @@ class GetBoosts:
                 # get boosts list
                 app.get_boosts()
         """
-        r = await self.invoke(
-            raw.functions.premium.GetMyBoosts()
-        )
+        r = await self.invoke(raw.functions.premium.GetMyBoosts())
 
         users = {i.id: i for i in r.users}
         chats = {i.id: i for i in r.chats}
@@ -53,5 +49,6 @@ class GetBoosts:
                 boost,
                 users,
                 chats,
-            ) for boost in r.my_boosts
+            )
+            for boost in r.my_boosts
         )

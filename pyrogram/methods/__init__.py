@@ -26,9 +26,9 @@ from .invite_links import InviteLinks
 from .messages import Messages
 from .password import Password
 from .premium import Premium
-from .users import Users
-from .stories import Stories
 from .stickers import Stickers
+from .stories import Stories
+from .users import Users
 from .utilities import Utilities
 
 

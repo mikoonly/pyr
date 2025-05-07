@@ -19,8 +19,8 @@
 from typing import List
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
 from ..object import Object
 
 
@@ -66,13 +66,18 @@ class ChatPreview(Object):
     def _parse(client, chat_invite: "raw.types.ChatInvite") -> "ChatPreview":
         return ChatPreview(
             title=chat_invite.title,
-            type=("group" if not chat_invite.channel else
-                  "channel" if chat_invite.broadcast else
-                  "supergroup"),
+            type=(
+                "group"
+                if not chat_invite.channel
+                else "channel" if chat_invite.broadcast else "supergroup"
+            ),
             members_count=chat_invite.participants_count,
             photo=types.Photo._parse(client, chat_invite.photo),
-            members=[types.User._parse(client, user) for user in chat_invite.participants] or None,
-            client=client
+            members=[
+                types.User._parse(client, user) for user in chat_invite.participants
+            ]
+            or None,
+            client=client,
         )
 
     # TODO: Maybe just merge this object into Chat itself by adding the "members" field.

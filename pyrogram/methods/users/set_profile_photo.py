@@ -16,7 +16,7 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Union, BinaryIO
+from typing import BinaryIO, Union
 
 import pyrogram
 from pyrogram import raw
@@ -68,8 +68,7 @@ class SetProfilePhoto:
         return bool(
             await self.invoke(
                 raw.functions.photos.UploadProfilePhoto(
-                    file=await self.save_file(photo),
-                    video=await self.save_file(video)
+                    file=await self.save_file(photo), video=await self.save_file(video)
                 )
             )
         )

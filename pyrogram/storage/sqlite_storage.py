@@ -17,13 +17,13 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 import inspect
-import sqlite3
 import time
-from typing import List, Tuple, Any
+from typing import Any, List, Tuple
 
 from pyrogram import raw
-from .storage import Storage
+
 from .. import utils
+from .storage import Storage
 
 # language=SQLite
 SCHEMA = """
@@ -70,20 +70,14 @@ END;
 
 def get_input_peer(peer_id: int, access_hash: int, peer_type: str):
     if peer_type in ["user", "bot"]:
-        return raw.types.InputPeerUser(
-            user_id=peer_id,
-            access_hash=access_hash
-        )
+        return raw.types.InputPeerUser(user_id=peer_id, access_hash=access_hash)
 
     if peer_type == "group":
-        return raw.types.InputPeerChat(
-            chat_id=-peer_id
-        )
+        return raw.types.InputPeerChat(chat_id=-peer_id)
 
     if peer_type in ["channel", "supergroup"]:
         return raw.types.InputPeerChannel(
-            channel_id=utils.get_channel_id(peer_id),
-            access_hash=access_hash
+            channel_id=utils.get_channel_id(peer_id), access_hash=access_hash
         )
 
     raise ValueError(f"Invalid peer type: {peer_type}")
@@ -102,14 +96,11 @@ class SQLiteStorage(Storage):
         with self.conn:
             self.conn.executescript(SCHEMA)
 
-            self.conn.execute(
-                "INSERT INTO version VALUES (?)",
-                (self.VERSION,)
-            )
+            self.conn.execute("INSERT INTO version VALUES (?)", (self.VERSION,))
 
             self.conn.execute(
                 "INSERT INTO sessions VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (2, None, None, None, 0, None, None)
+                (2, None, None, None, 0, None, None),
             )
 
     async def open(self):
@@ -129,13 +120,12 @@ class SQLiteStorage(Storage):
         self.conn.executemany(
             "REPLACE INTO peers (id, access_hash, type, username, phone_number)"
             "VALUES (?, ?, ?, ?, ?)",
-            peers
+            peers,
         )
 
     async def get_peer_by_id(self, peer_id: int):
         r = self.conn.execute(
-            "SELECT id, access_hash, type FROM peers WHERE id = ?",
-            (peer_id,)
+            "SELECT id, access_hash, type FROM peers WHERE id = ?", (peer_id,)
         ).fetchone()
 
         if r is None:
@@ -147,7 +137,7 @@ class SQLiteStorage(Storage):
         r = self.conn.execute(
             "SELECT id, access_hash, type, last_update_on FROM peers WHERE username = ?"
             "ORDER BY last_update_on DESC",
-            (username,)
+            (username,),
         ).fetchone()
 
         if r is None:
@@ -161,7 +151,7 @@ class SQLiteStorage(Storage):
     async def get_peer_by_phone_number(self, phone_number: str):
         r = self.conn.execute(
             "SELECT id, access_hash, type FROM peers WHERE phone_number = ?",
-            (phone_number,)
+            (phone_number,),
         ).fetchone()
 
         if r is None:
@@ -172,18 +162,13 @@ class SQLiteStorage(Storage):
     def _get(self):
         attr = inspect.stack()[2].function
 
-        return self.conn.execute(
-            f"SELECT {attr} FROM sessions"
-        ).fetchone()[0]
+        return self.conn.execute(f"SELECT {attr} FROM sessions").fetchone()[0]
 
     def _set(self, value: Any):
         attr = inspect.stack()[2].function
 
         with self.conn:
-            self.conn.execute(
-                f"UPDATE sessions SET {attr} = ?",
-                (value,)
-            )
+            self.conn.execute(f"UPDATE sessions SET {attr} = ?", (value,))
 
     def _accessor(self, value: Any = object):
         return self._get() if value == object else self._set(value)
@@ -211,12 +196,7 @@ class SQLiteStorage(Storage):
 
     def version(self, value: int = object):
         if value == object:
-            return self.conn.execute(
-                "SELECT number FROM version"
-            ).fetchone()[0]
+            return self.conn.execute("SELECT number FROM version").fetchone()[0]
         else:
             with self.conn:
-                self.conn.execute(
-                    "UPDATE version SET number = ?",
-                    (value,)
-                )
+                self.conn.execute("UPDATE version SET number = ?", (value,))

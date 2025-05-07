@@ -24,8 +24,7 @@ from pyrogram import types
 
 class GetFolder:
     async def get_folder(
-        self: "pyrogram.Client",
-        folder_id: int
+        self: "pyrogram.Client", folder_id: int
     ) -> Optional["types.Folder"]:
         """Get a user's folder by id.
 

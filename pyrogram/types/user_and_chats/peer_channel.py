@@ -17,6 +17,7 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyrogram import raw
+
 from ..object import Object
 
 
@@ -29,16 +30,11 @@ class PeerChannel(Object):
             Id of the channel.
     """
 
-    def __init__(
-        self, *,
-        channel_id: int
-    ):
+    def __init__(self, *, channel_id: int):
         super().__init__()
 
         self.channel_id = channel_id
 
     @staticmethod
     def _parse(action: "raw.types.PeerChannel") -> "PeerChannel":
-        return PeerChannel(
-            channel_id=getattr(action, "channel_id", None)
-        )
+        return PeerChannel(channel_id=getattr(action, "channel_id", None))

@@ -16,10 +16,10 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
+from typing import Union
+
 import pyrogram
 from pyrogram import raw
-from pyrogram import types
-from typing import Union
 
 
 class EditForumTopic:
@@ -30,7 +30,7 @@ class EditForumTopic:
         title: str = None,
         icon_emoji_id: int = None,
         closed: bool = None,
-        hidden: bool = None
+        hidden: bool = None,
     ) -> bool:
         """Edit a forum topic.
 
@@ -70,7 +70,7 @@ class EditForumTopic:
                 title=title,
                 icon_emoji_id=icon_emoji_id,
                 closed=closed,
-                hidden=hidden
+                hidden=hidden,
             )
         )
 

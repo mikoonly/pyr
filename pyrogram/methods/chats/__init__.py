@@ -19,11 +19,11 @@
 from .add_chat_members import AddChatMembers
 from .archive_chats import ArchiveChats
 from .ban_chat_member import BanChatMember
+from .close_forum_topic import CloseForumTopic
 from .create_channel import CreateChannel
 from .create_forum_topic import CreateForumTopic
 from .create_group import CreateGroup
 from .create_supergroup import CreateSupergroup
-from .close_forum_topic import CloseForumTopic
 from .delete_channel import DeleteChannel
 from .delete_chat_photo import DeleteChatPhoto
 from .delete_folder import DeleteFolder
@@ -47,8 +47,8 @@ from .get_forum_topics_by_id import GetForumTopicsByID
 from .get_nearby_chats import GetNearbyChats
 from .get_send_as_chats import GetSendAsChats
 from .join_chat import JoinChat
-from .leave_chat import LeaveChat
 from .join_folder import JoinFolder
+from .leave_chat import LeaveChat
 from .leave_folder import LeaveFolder
 from .mark_chat_unread import MarkChatUnread
 from .pin_chat_message import PinChatMessage
@@ -128,6 +128,6 @@ class Chats(
     GetChatOnlineCount,
     GetSendAsChats,
     SetSendAsChat,
-    SetChatProtectedContent
+    SetChatProtectedContent,
 ):
     pass

@@ -20,6 +20,7 @@ from datetime import datetime
 
 import pyrogram
 from pyrogram import raw, types, utils
+
 from ..object import Object
 
 
@@ -62,7 +63,9 @@ class MyBoost(Object):
         self.cooldown_until_date = cooldown_until_date
 
     @staticmethod
-    def _parse(client: "pyrogram.Client", my_boost: "raw.types.MyBoost", users, chats) -> "MyBoost":
+    def _parse(
+        client: "pyrogram.Client", my_boost: "raw.types.MyBoost", users, chats
+    ) -> "MyBoost":
         peer_id = utils.get_raw_peer_id(my_boost.peer)
 
         if isinstance(my_boost.peer, raw.types.PeerChannel):
@@ -75,5 +78,7 @@ class MyBoost(Object):
             chat=chat,
             date=utils.timestamp_to_datetime(my_boost.date),
             expire_date=utils.timestamp_to_datetime(my_boost.expire_date),
-            cooldown_until_date=utils.timestamp_to_datetime(my_boost.cooldown_until_date),
+            cooldown_until_date=utils.timestamp_to_datetime(
+                my_boost.cooldown_until_date
+            ),
         )

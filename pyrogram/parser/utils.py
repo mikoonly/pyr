@@ -26,9 +26,10 @@ SMP_RE = re.compile(r"[\U00010000-\U0010FFFF]")
 def add_surrogates(text):
     # Replace each SMP code point with a surrogate pair
     return SMP_RE.sub(
-        lambda match:  # Split SMP in two surrogates
-        "".join(chr(i) for i in unpack("<HH", match.group().encode("utf-16le"))),
-        text
+        lambda match: "".join(  # Split SMP in two surrogates
+            chr(i) for i in unpack("<HH", match.group().encode("utf-16le"))
+        ),
+        text,
     )
 
 
@@ -40,6 +41,7 @@ def remove_surrogates(text):
 def replace_once(source: str, old: str, new: str, start: int):
     return source[:start] + source[start:].replace(old, new, 1)
 
+
 def within_surrogate(text, index, *, length=None):
     """
     `True` if ``index`` is within a surrogate (before and after it, not at!).
@@ -48,7 +50,7 @@ def within_surrogate(text, index, *, length=None):
         length = len(text)
 
     return (
-            1 < index < len(text) and  # in bounds
-            '\ud800' <= text[index - 1] <= '\udbff' and  # previous is
-            '\ud800' <= text[index] <= '\udfff'  # current is
+        1 < index < len(text)  # in bounds
+        and "\ud800" <= text[index - 1] <= "\udbff"  # previous is
+        and "\ud800" <= text[index] <= "\udfff"  # current is
     )

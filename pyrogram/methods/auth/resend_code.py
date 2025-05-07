@@ -19,17 +19,14 @@
 import logging
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 log = logging.getLogger(__name__)
 
 
 class ResendCode:
     async def resend_code(
-        self: "pyrogram.Client",
-        phone_number: str,
-        phone_code_hash: str
+        self: "pyrogram.Client", phone_number: str, phone_code_hash: str
     ) -> "types.SentCode":
         """Re-send the confirmation code using a different type.
 
@@ -56,8 +53,7 @@ class ResendCode:
 
         r = await self.invoke(
             raw.functions.auth.ResendCode(
-                phone_number=phone_number,
-                phone_code_hash=phone_code_hash
+                phone_number=phone_number, phone_code_hash=phone_code_hash
             )
         )
 

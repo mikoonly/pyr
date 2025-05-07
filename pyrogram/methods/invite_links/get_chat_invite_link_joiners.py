@@ -16,11 +16,10 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Union, Optional, AsyncGenerator
+from typing import AsyncGenerator, Optional, Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetChatInviteLinkJoiners:
@@ -28,7 +27,7 @@ class GetChatInviteLinkJoiners:
         self: "pyrogram.Client",
         chat_id: Union[int, str],
         invite_link: str,
-        limit: int = 0
+        limit: int = 0,
     ) -> Optional[AsyncGenerator["types.ChatJoiner", None]]:
         """Get the members who joined the chat with the invite link.
 
@@ -66,7 +65,7 @@ class GetChatInviteLinkJoiners:
                     link=invite_link,
                     limit=limit,
                     offset_date=offset_date,
-                    offset_user=offset_user
+                    offset_user=offset_user,
                 )
             )
 

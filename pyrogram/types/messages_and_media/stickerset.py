@@ -18,6 +18,7 @@
 
 
 from pyrogram import raw
+
 from ..object import Object
 
 
@@ -65,10 +66,10 @@ class StickerSet(Object):
     def _parse(stickerset: "raw.types.StickerSet") -> "StickerSet":
 
         return StickerSet(
-            id=getattr(stickerset,"id", None),
-            title=getattr(stickerset,"title", None),
-            short_name=getattr(stickerset,"short_name", None),
-            count=getattr(stickerset,"count", None),
-            masks=getattr(stickerset,"masks", None),
-            emojis=getattr(stickerset,"emojis", None)
+            id=getattr(stickerset, "id", None),
+            title=getattr(stickerset, "title", None),
+            short_name=getattr(stickerset, "short_name", None),
+            count=getattr(stickerset, "count", None),
+            masks=getattr(stickerset, "masks", None),
+            emojis=getattr(stickerset, "emojis", None),
         )

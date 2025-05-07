@@ -22,10 +22,10 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Callable
 
-from .handler import Handler
-
 import pyrogram
 from pyrogram.types import Update
+
+from .handler import Handler
 
 
 class ErrorHandler(Handler):
@@ -63,13 +63,13 @@ class ErrorHandler(Handler):
         self.exceptions = (
             tuple(exceptions)
             if isinstance(exceptions, Iterable)
-            else (exceptions,)
-            if exceptions
-            else (Exception,)
+            else (exceptions,) if exceptions else (Exception,)
         )
         super().__init__(callback)
 
-    async def check(self, client: pyrogram.Client, update: Update, exception: Exception) -> bool:
+    async def check(
+        self, client: pyrogram.Client, update: Update, exception: Exception
+    ) -> bool:
         if isinstance(exception, self.exceptions):
             await self.callback(client, update, exception)
             return True

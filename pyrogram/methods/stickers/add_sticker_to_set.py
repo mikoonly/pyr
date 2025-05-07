@@ -18,14 +18,12 @@
 
 import os
 import re
+from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import raw, types, utils
 from pyrogram.file_id import FileId, FileType
 
-from typing import Union
 
 class AddStickerToSet:
     async def add_sticker_to_set(
@@ -77,9 +75,11 @@ class AddStickerToSet:
                     user_id or "me",
                     sticker,
                     force_document=True,
-                    disable_notification=True
+                    disable_notification=True,
                 )
-                uploaded_media = utils.get_input_media_from_file_id(document.document.file_id, FileType.DOCUMENT)
+                uploaded_media = utils.get_input_media_from_file_id(
+                    document.document.file_id, FileType.DOCUMENT
+                )
                 media = uploaded_media.id
                 _ = await document.delete()
             else:
@@ -87,28 +87,26 @@ class AddStickerToSet:
                 media = raw.types.InputDocument(
                     id=decoded.media_id,
                     access_hash=decoded.access_hash,
-                    file_reference=decoded.file_reference
+                    file_reference=decoded.file_reference,
                 )
         else:
             if self.me.is_bot and user_id is None:
                 raise ValueError("user_id is required for bots")
             document = await self.send_document(
-                user_id or "me",
-                sticker,
-                force_document=True,
-                disable_notification=True
+                user_id or "me", sticker, force_document=True, disable_notification=True
             )
-            uploaded_media = utils.get_input_media_from_file_id(document.document.file_id, FileType.DOCUMENT)
+            uploaded_media = utils.get_input_media_from_file_id(
+                document.document.file_id, FileType.DOCUMENT
+            )
             media = uploaded_media.id
             _ = await document.delete()
 
         r = await self.invoke(
             raw.functions.stickers.AddStickerToSet(
-                stickerset=raw.types.InputStickerSetShortName(short_name=set_short_name),
-                sticker=raw.types.InputStickerSetItem(
-                    document=media,
-                    emoji=emoji
-                )
+                stickerset=raw.types.InputStickerSetShortName(
+                    short_name=set_short_name
+                ),
+                sticker=raw.types.InputStickerSetItem(document=media, emoji=emoji),
             )
         )
 

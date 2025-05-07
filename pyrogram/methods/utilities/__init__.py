@@ -18,8 +18,8 @@
 
 from .add_handler import AddHandler
 from .export_session_string import ExportSessionString
-from .remove_handler import RemoveHandler
 from .ping import Ping
+from .remove_handler import RemoveHandler
 from .restart import Restart
 from .run import Run
 from .start import Start
@@ -36,6 +36,6 @@ class Utilities(
     Run,
     Start,
     Stop,
-    StopTransmission
+    StopTransmission,
 ):
     pass

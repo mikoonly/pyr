@@ -18,16 +18,17 @@
 
 import pyrogram
 from pyrogram import raw, types
+
 from .inline_query_result import InlineQueryResult
 
 
 class InlineQueryResultContact(InlineQueryResult):
     """Contact with a phone number
-    
+
     By default, this contact will be sent by the user.
     Alternatively, you can use *input_message_content* to send a message with the specified content instead of the
     contact.
-    
+
     Parameters:
         phone_number (``str``):
             Contact's phone number.
@@ -47,7 +48,7 @@ class InlineQueryResultContact(InlineQueryResult):
 
         reply_markup (:obj:`~pyrogram.types.InlineKeyboardMarkup`, *optional*):
             Inline keyboard attached to the message.
-            
+
         input_message_content (:obj:`~pyrogram.types.InputMessageContent`, *optional*):
             Content of the message to be sent instead of the contact.
 
@@ -72,7 +73,7 @@ class InlineQueryResultContact(InlineQueryResult):
         input_message_content: "types.InputMessageContent" = None,
         thumb_url: str = None,
         thumb_width: int = 0,
-        thumb_height: int = 0
+        thumb_height: int = 0,
     ):
         super().__init__("contact", id, input_message_content, reply_markup)
 
@@ -97,18 +98,25 @@ class InlineQueryResultContact(InlineQueryResult):
                     first_name=self.first_name,
                     last_name=self.last_name,
                     vcard=self.vcard,
-                    reply_markup=await self.reply_markup.write(client) if self.reply_markup else None,
+                    reply_markup=(
+                        await self.reply_markup.write(client)
+                        if self.reply_markup
+                        else None
+                    ),
                 )
             ),
-            thumb=raw.types.InputWebDocument(
-                url=self.thumb_url,
-                size=0,
-                mime_type="image/jpg",
-                attributes=[
-                    raw.types.DocumentAttributeImageSize(
-                        w=self.thumb_width,
-                        h=self.thumb_height
-                    )
-                ]
-            ) if self.thumb_url else None
+            thumb=(
+                raw.types.InputWebDocument(
+                    url=self.thumb_url,
+                    size=0,
+                    mime_type="image/jpg",
+                    attributes=[
+                        raw.types.DocumentAttributeImageSize(
+                            w=self.thumb_width, h=self.thumb_height
+                        )
+                    ],
+                )
+                if self.thumb_url
+                else None
+            ),
         )

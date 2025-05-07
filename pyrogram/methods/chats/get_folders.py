@@ -19,7 +19,7 @@
 from typing import AsyncGenerator, Optional
 
 import pyrogram
-from pyrogram import types, raw
+from pyrogram import raw, types
 
 
 class GetFolders:
@@ -44,11 +44,19 @@ class GetFolders:
         dialog_peers = []
 
         for folder in raw_folders:
-            if not isinstance(folder, (raw.types.DialogFilter, raw.types.DialogFilterChatlist)):
+            if not isinstance(
+                folder, (raw.types.DialogFilter, raw.types.DialogFilterChatlist)
+            ):
                 continue
 
-            peers = folder.pinned_peers + folder.include_peers + getattr(folder, "exclude_peers", [])
-            input_peers = [raw.types.InputDialogPeer(peer=peer) for peer in peers] + [raw.types.InputDialogPeerFolder(folder_id=folder.id)]
+            peers = (
+                folder.pinned_peers
+                + folder.include_peers
+                + getattr(folder, "exclude_peers", [])
+            )
+            input_peers = [raw.types.InputDialogPeer(peer=peer) for peer in peers] + [
+                raw.types.InputDialogPeerFolder(folder_id=folder.id)
+            ]
             dialog_peers.extend(input_peers)
 
         r = await self.invoke(raw.functions.messages.GetPeerDialogs(peers=dialog_peers))
@@ -60,7 +68,9 @@ class GetFolders:
         folders = []
 
         for folder in raw_folders:
-            if not isinstance(folder, (raw.types.DialogFilter, raw.types.DialogFilterChatlist)):
+            if not isinstance(
+                folder, (raw.types.DialogFilter, raw.types.DialogFilterChatlist)
+            ):
                 continue
 
             folders.append(types.Folder._parse(self, folder, peers))

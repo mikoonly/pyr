@@ -20,8 +20,7 @@ from datetime import datetime
 from typing import Union
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types
+from pyrogram import raw, types, utils
 
 
 class RestrictChatMember:
@@ -30,7 +29,7 @@ class RestrictChatMember:
         chat_id: Union[int, str],
         user_id: Union[int, str],
         permissions: "types.ChatPermissions",
-        until_date: datetime = utils.zero_datetime()
+        until_date: datetime = utils.zero_datetime(),
     ) -> "types.Chat":
         """Restrict a user in a supergroup.
 
@@ -93,7 +92,7 @@ class RestrictChatMember:
                     invite_users=not permissions.can_invite_users,
                     pin_messages=not permissions.can_pin_messages,
                     manage_topics=not permissions.can_manage_topics,
-                )
+                ),
             )
         )
 

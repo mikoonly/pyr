@@ -19,14 +19,12 @@
 from typing import Union
 
 import pyrogram
-from pyrogram import raw, enums
+from pyrogram import enums, raw
 
 
 class SendChatAction:
     async def send_chat_action(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        action: "enums.ChatAction"
+        self: "pyrogram.Client", chat_id: Union[int, str], action: "enums.ChatAction"
     ) -> bool:
         """Tell the other party that something is happening on your side.
 
@@ -74,7 +72,6 @@ class SendChatAction:
 
         return await self.invoke(
             raw.functions.messages.SetTyping(
-                peer=await self.resolve_peer(chat_id),
-                action=action
+                peer=await self.resolve_peer(chat_id), action=action
             )
         )

@@ -16,10 +16,10 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyrogram
-from pyrogram import raw
-from pyrogram import types
 from typing import Union
+
+import pyrogram
+from pyrogram import raw, types
 
 
 class CreateForumTopic:
@@ -28,7 +28,7 @@ class CreateForumTopic:
         chat_id: Union[int, str],
         title: str,
         icon_color: int = None,
-        icon_emoji_id: int = None
+        icon_emoji_id: int = None,
     ) -> "types.ForumTopicCreated":
         """Create a new forum topic.
 
@@ -61,7 +61,7 @@ class CreateForumTopic:
                 title=title,
                 random_id=self.rnd_id(),
                 icon_color=icon_color,
-                icon_emoji_id=icon_emoji_id
+                icon_emoji_id=icon_emoji_id,
             )
         )
 

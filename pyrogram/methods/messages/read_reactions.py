@@ -47,9 +47,7 @@ class ReadReactions:
                 await app.read_reactions(chat_id)
         """
         r = await self.invoke(
-            raw.functions.messages.ReadReactions(
-                peer=await self.resolve_peer(chat_id)
-            )
+            raw.functions.messages.ReadReactions(peer=await self.resolve_peer(chat_id))
         )
 
         return bool(r)

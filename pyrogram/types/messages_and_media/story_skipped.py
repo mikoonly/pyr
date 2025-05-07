@@ -16,14 +16,16 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-import pyrogram
-
 from datetime import datetime
+from typing import Union
+
+import pyrogram
 from pyrogram import raw, types, utils
 from pyrogram.errors import PeerIdInvalid
-from typing import Union
+
 from ..object import Object
 from ..update import Update
+
 
 class StorySkipped(Object, Update):
     """A skipped story.
@@ -74,13 +76,15 @@ class StorySkipped(Object, Update):
         stories: raw.base.StoryItem,
         users: dict,
         chats: dict,
-        peer: Union["raw.types.PeerChannel", "raw.types.PeerUser"]
+        peer: Union["raw.types.PeerChannel", "raw.types.PeerUser"],
     ) -> "StorySkipped":
         from_user = None
         sender_chat = None
 
         if isinstance(peer, raw.types.InputPeerSelf):
-            r = await client.invoke(raw.functions.users.GetUsers(id=[raw.types.InputPeerSelf()]))
+            r = await client.invoke(
+                raw.functions.users.GetUsers(id=[raw.types.InputPeerSelf()])
+            )
             peer_id = r[0].id
             users.update({i.id: i for i in r})
         elif isinstance(peer, (raw.types.InputPeerUser, raw.types.InputPeerChannel)):
@@ -88,13 +92,14 @@ class StorySkipped(Object, Update):
         else:
             peer_id = utils.get_raw_peer_id(peer)
 
-        if isinstance(peer, (raw.types.PeerUser, raw.types.InputPeerUser)) and peer_id not in users:
+        if (
+            isinstance(peer, (raw.types.PeerUser, raw.types.InputPeerUser))
+            and peer_id not in users
+        ):
             try:
                 r = await client.invoke(
                     raw.functions.users.GetUsers(
-                        id=[
-                            await client.resolve_peer(peer_id)
-                        ]
+                        id=[await client.resolve_peer(peer_id)]
                     )
                 )
             except PeerIdInvalid:
@@ -103,7 +108,11 @@ class StorySkipped(Object, Update):
                 users.update({i.id: i for i in r})
 
         from_user = types.User._parse(client, users.get(peer_id, None))
-        sender_chat = types.Chat._parse_channel_chat(client, chats[peer_id]) if not from_user else None
+        sender_chat = (
+            types.Chat._parse_channel_chat(client, chats[peer_id])
+            if not from_user
+            else None
+        )
 
         return StorySkipped(
             id=stories.id,
@@ -112,5 +121,5 @@ class StorySkipped(Object, Update):
             date=utils.timestamp_to_datetime(stories.date),
             expire_date=utils.timestamp_to_datetime(stories.expire_date),
             close_friends=stories.close_friends,
-            client=client
+            client=client,
         )

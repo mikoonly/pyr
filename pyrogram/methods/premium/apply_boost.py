@@ -19,8 +19,7 @@
 from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class ApplyBoost:
@@ -52,8 +51,5 @@ class ApplyBoost:
         )
 
         return types.MyBoost._parse(
-            self,
-            r.my_boosts[0],
-            {i.id: i for i in r.users},
-            {i.id: i for i in r.chats}
+            self, r.my_boosts[0], {i.id: i for i in r.users}, {i.id: i for i in r.chats}
         )

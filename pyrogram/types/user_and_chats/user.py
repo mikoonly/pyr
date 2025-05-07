@@ -21,9 +21,8 @@ from datetime import datetime
 from typing import List, Optional
 
 import pyrogram
-from pyrogram import enums, utils
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import enums, raw, types, utils
+
 from ..object import Object
 from ..update import Update
 
@@ -201,7 +200,7 @@ class User(Object, Update):
         photo: "types.ChatPhoto" = None,
         restrictions: List["types.Restriction"] = None,
         color: int = None,
-        background_emoji_id: int = None
+        background_emoji_id: int = None,
     ):
         super().__init__(client)
 
@@ -245,7 +244,7 @@ class User(Object, Update):
         return Link(
             f"tg://user?id={self.id}",
             self.first_name or "Deleted Account",
-            self._client.parse_mode
+            self._client.parse_mode,
         )
 
     @staticmethod
@@ -273,16 +272,20 @@ class User(Object, Update):
             last_name=user.last_name,
             **User._parse_status(user.status, user.bot),
             username=user.username,
-            usernames=types.List([types.Username._parse(r) for r in user.usernames]) or None,
+            usernames=types.List([types.Username._parse(r) for r in user.usernames])
+            or None,
             language_code=user.lang_code,
             emoji_status=types.EmojiStatus._parse(client, user.emoji_status),
             dc_id=getattr(user.photo, "dc_id", None),
             phone_number=user.phone,
             photo=types.ChatPhoto._parse(client, user.photo, user.id, user.access_hash),
-            restrictions=types.List([types.Restriction._parse(r) for r in user.restriction_reason]) or None,
+            restrictions=types.List(
+                [types.Restriction._parse(r) for r in user.restriction_reason]
+            )
+            or None,
             color=getattr(user, "color", None),
             background_emoji_id=getattr(user, "background_emoji_id", None),
-            client=client
+            client=client,
         )
 
     @staticmethod
@@ -315,7 +318,7 @@ class User(Object, Update):
         return {
             "status": status,
             "last_online_date": last_online_date,
-            "next_offline_date": next_offline_date
+            "next_offline_date": next_offline_date,
         }
 
     @staticmethod
@@ -323,7 +326,7 @@ class User(Object, Update):
         return User(
             id=user_status.user_id,
             **User._parse_status(user_status.status),
-            client=client
+            client=client,
         )
 
     async def archive(self):

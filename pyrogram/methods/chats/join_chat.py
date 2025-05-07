@@ -19,14 +19,12 @@
 from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class JoinChat:
     async def join_chat(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str]
+        self: "pyrogram.Client", chat_id: Union[int, str]
     ) -> "types.Chat":
         """Join a group chat or channel.
 
@@ -56,9 +54,7 @@ class JoinChat:
 
         if match:
             chat = await self.invoke(
-                raw.functions.messages.ImportChatInvite(
-                    hash=match.group(1)
-                )
+                raw.functions.messages.ImportChatInvite(hash=match.group(1))
             )
             if isinstance(chat.chats[0], raw.types.Chat):
                 return types.Chat._parse_chat_chat(self, chat.chats[0])

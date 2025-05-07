@@ -16,6 +16,7 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
+from .birthday import Birthday
 from .chat import Chat
 from .chat_admin_with_invite_links import ChatAdminWithInviteLinks
 from .chat_event import ChatEvent
@@ -34,16 +35,16 @@ from .dialog import Dialog
 from .emoji_status import EmojiStatus
 from .folder import Folder
 from .invite_link_importer import InviteLinkImporter
-from .restriction import Restriction
 from .peer_channel import PeerChannel
 from .peer_user import PeerUser
+from .restriction import Restriction
 from .user import User
 from .username import Username
 from .video_chat_ended import VideoChatEnded
 from .video_chat_members_invited import VideoChatMembersInvited
 from .video_chat_scheduled import VideoChatScheduled
 from .video_chat_started import VideoChatStarted
-from .birthday import Birthday
+
 __all__ = [
     "Chat",
     "ChatMember",
@@ -72,5 +73,5 @@ __all__ = [
     "ChatJoiner",
     "EmojiStatus",
     "Folder",
-    "ChatReactions"
+    "ChatReactions",
 ]

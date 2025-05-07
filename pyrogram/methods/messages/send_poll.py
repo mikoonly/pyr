@@ -17,11 +17,10 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from typing import Union, List, Optional
+from typing import List, Optional, Union
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types, enums
+from pyrogram import enums, raw, types, utils
 
 
 class SendPoll:
@@ -53,8 +52,8 @@ class SendPoll:
             "types.InlineKeyboardMarkup",
             "types.ReplyKeyboardMarkup",
             "types.ReplyKeyboardRemove",
-            "types.ForceReply"
-        ] = None
+            "types.ForceReply",
+        ] = None,
     ) -> "types.Message":
         """Send a new poll.
 
@@ -154,11 +153,17 @@ class SendPoll:
 
                 await app.send_poll(chat_id, "Is this a poll question?", ["Yes", "No", "Maybe"])
         """
-        solution, solution_entities = (await utils.parse_text_entities(
-            self, explanation, explanation_parse_mode, explanation_entities
-        )).values()
+        solution, solution_entities = (
+            await utils.parse_text_entities(
+                self, explanation, explanation_parse_mode, explanation_entities
+            )
+        ).values()
 
-        quote_text, quote_entities = (await utils.parse_text_entities(self, quote_text, parse_mode, quote_entities)).values()
+        quote_text, quote_entities = (
+            await utils.parse_text_entities(
+                self, quote_text, parse_mode, quote_entities
+            )
+        ).values()
 
         r = await self.invoke(
             raw.functions.messages.SendMedia(
@@ -176,35 +181,49 @@ class SendPoll:
                         multiple_choice=allows_multiple_answers,
                         quiz=type == enums.PollType.QUIZ or False,
                         close_period=open_period,
-                        close_date=utils.datetime_to_timestamp(close_date)
+                        close_date=utils.datetime_to_timestamp(close_date),
                     ),
-                    correct_answers=[bytes([correct_option_id])] if correct_option_id is not None else None,
+                    correct_answers=(
+                        [bytes([correct_option_id])]
+                        if correct_option_id is not None
+                        else None
+                    ),
                     solution=solution,
-                    solution_entities=solution_entities or []
+                    solution_entities=solution_entities or [],
                 ),
                 message="",
                 silent=disable_notification,
                 reply_to=utils.get_reply_to(
                     reply_to_message_id=reply_to_message_id,
                     message_thread_id=message_thread_id,
-                    reply_to_peer=await self.resolve_peer(reply_to_chat_id) if reply_to_chat_id else None,
+                    reply_to_peer=(
+                        await self.resolve_peer(reply_to_chat_id)
+                        if reply_to_chat_id
+                        else None
+                    ),
                     quote_text=quote_text,
                     quote_entities=quote_entities,
                 ),
                 random_id=self.rnd_id(),
                 schedule_date=utils.datetime_to_timestamp(schedule_date),
                 noforwards=protect_content,
-                reply_markup=await reply_markup.write(self) if reply_markup else None
+                reply_markup=await reply_markup.write(self) if reply_markup else None,
             )
         )
 
         for i in r.updates:
-            if isinstance(i, (raw.types.UpdateNewMessage,
-                              raw.types.UpdateNewChannelMessage,
-                              raw.types.UpdateNewScheduledMessage)):
+            if isinstance(
+                i,
+                (
+                    raw.types.UpdateNewMessage,
+                    raw.types.UpdateNewChannelMessage,
+                    raw.types.UpdateNewScheduledMessage,
+                ),
+            ):
                 return await types.Message._parse(
-                    self, i.message,
+                    self,
+                    i.message,
                     {i.id: i for i in r.users},
                     {i.id: i for i in r.chats},
-                    is_scheduled=isinstance(i, raw.types.UpdateNewScheduledMessage)
+                    is_scheduled=isinstance(i, raw.types.UpdateNewScheduledMessage),
                 )

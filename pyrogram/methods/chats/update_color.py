@@ -19,15 +19,15 @@
 from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
 
 class UpdateColor:
     async def update_color(
         self: "pyrogram.Client",
         chat_id: Union[int, str],
         color: int,
-        background_emoji_id: int = None
+        background_emoji_id: int = None,
     ) -> "types.Chat":
         """Update color
 
@@ -57,19 +57,18 @@ class UpdateColor:
         if isinstance(peer, raw.types.InputPeerSelf):
             await self.invoke(
                 raw.functions.account.UpdateColor(
-                    color=color,
-                    background_emoji_id=background_emoji_id
+                    color=color, background_emoji_id=background_emoji_id
                 )
             )
 
-            r = await self.invoke(raw.functions.users.GetUsers(id=[raw.types.InputPeerSelf()]))
+            r = await self.invoke(
+                raw.functions.users.GetUsers(id=[raw.types.InputPeerSelf()])
+            )
             return types.Chat._parse_user_chat(self, r[0])
         else:
             r = await self.invoke(
                 raw.functions.channels.UpdateColor(
-                    channel=peer,
-                    color=color,
-                    background_emoji_id=background_emoji_id
+                    channel=peer, color=color, background_emoji_id=background_emoji_id
                 )
             )
 

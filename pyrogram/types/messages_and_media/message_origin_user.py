@@ -37,6 +37,7 @@ class MessageOriginUser(MessageOrigin):
         sender_user (:obj:`~pyrogram.types.User`):
             User that sent the message originally.
     """
+
     def __init__(
         self,
         *,
@@ -44,9 +45,6 @@ class MessageOriginUser(MessageOrigin):
         date: datetime = None,
         sender_user: "types.User" = None
     ):
-        super().__init__(
-            type=type,
-            date=date
-        )
+        super().__init__(type=type, date=date)
 
         self.sender_user = sender_user

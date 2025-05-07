@@ -20,8 +20,8 @@ from datetime import datetime
 from typing import Dict, Union
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types
+from pyrogram import raw, types, utils
+
 from ..object import Object
 from ..update import Update
 
@@ -72,9 +72,11 @@ class ChatMemberUpdated(Object, Update):
     @staticmethod
     def _parse(
         client: "pyrogram.Client",
-        update: Union["raw.types.UpdateChatParticipant", "raw.types.UpdateChannelParticipant"],
+        update: Union[
+            "raw.types.UpdateChatParticipant", "raw.types.UpdateChannelParticipant"
+        ],
         users: Dict[int, "raw.types.User"],
-        chats: Dict[int, "raw.types.Chat"]
+        chats: Dict[int, "raw.types.Chat"],
     ) -> "ChatMemberUpdated":
         chat_id = getattr(update, "chat_id", None) or getattr(update, "channel_id")
 
@@ -83,10 +85,14 @@ class ChatMemberUpdated(Object, Update):
         invite_link = None
 
         if update.prev_participant:
-            old_chat_member = types.ChatMember._parse(client, update.prev_participant, users, chats)
+            old_chat_member = types.ChatMember._parse(
+                client, update.prev_participant, users, chats
+            )
 
         if update.new_participant:
-            new_chat_member = types.ChatMember._parse(client, update.new_participant, users, chats)
+            new_chat_member = types.ChatMember._parse(
+                client, update.new_participant, users, chats
+            )
 
         if update.invite:
             invite_link = types.ChatInviteLink._parse(client, update.invite, users)
@@ -98,5 +104,5 @@ class ChatMemberUpdated(Object, Update):
             old_chat_member=old_chat_member,
             new_chat_member=new_chat_member,
             invite_link=invite_link,
-            client=client
+            client=client,
         )

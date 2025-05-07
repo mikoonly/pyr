@@ -17,6 +17,7 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyrogram import raw
+
 from ..object import Object
 
 
@@ -83,7 +84,7 @@ class ChatPrivileges(Object):
         can_edit_messages: bool = False,  # Channels only
         can_invite_users: bool = False,
         can_pin_messages: bool = False,  # Groups and supergroups only
-        can_manage_topics: bool = False, # Supergroups only
+        can_manage_topics: bool = False,  # Supergroups only
         is_anonymous: bool = False
     ):
         super().__init__(None)
@@ -115,5 +116,5 @@ class ChatPrivileges(Object):
             can_invite_users=admin_rights.invite_users,
             can_pin_messages=admin_rights.pin_messages,
             can_manage_topics=admin_rights.manage_topics,
-            is_anonymous=admin_rights.anonymous
+            is_anonymous=admin_rights.anonymous,
         )

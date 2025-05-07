@@ -45,25 +45,27 @@ class TextQuote(Object):
             Otherwise, the quote was added automatically by the server.
 
     """
+
     def __init__(
-        self, *,
+        self,
+        *,
         text: Optional[str] = None,
         entities: Optional[List["types.MessageEntity"]] = None,
-       # position: Optional[int] = None,
+        # position: Optional[int] = None,
         is_manual: Optional[bool] = None
     ):
         super().__init__()
 
         self.text = text
         self.entities = entities
-      #  self.position = position
+        #  self.position = position
         self.is_manual = is_manual
 
     @staticmethod
     def _parse(
         client: "pyrogram.Client",
         users: Dict[int, "raw.types.User"],
-        reply_to: "raw.types.MessageReplyHeader"
+        reply_to: "raw.types.MessageReplyHeader",
     ) -> "TextQuote":
         if isinstance(reply_to, raw.types.MessageReplyHeader):
             entities = types.List(
@@ -72,13 +74,13 @@ class TextQuote(Object):
                     [
                         types.MessageEntity._parse(client, entity, users)
                         for entity in getattr(reply_to, "quote_entities", [])
-                    ]
+                    ],
                 )
             )
 
             return TextQuote(
                 text=Str(reply_to.quote_text).init(entities) or None,
                 entities=entities or None,
-            #    position=reply_to.quote_offset or 0,
-                is_manual=reply_to.quote
+                #    position=reply_to.quote_offset or 0,
+                is_manual=reply_to.quote,
             )

@@ -16,11 +16,11 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Optional, List, Union, BinaryIO
+from typing import BinaryIO, List, Optional, Union
 
-from .input_media import InputMedia
-from ..messages_and_media import MessageEntity
 from ... import enums
+from ..messages_and_media import MessageEntity
+from .input_media import InputMedia
 
 
 class InputMediaDocument(InputMedia):
@@ -58,7 +58,7 @@ class InputMediaDocument(InputMedia):
         thumb: str = None,
         caption: str = "",
         parse_mode: Optional["enums.ParseMode"] = None,
-        caption_entities: List[MessageEntity] = None
+        caption_entities: List[MessageEntity] = None,
     ):
         super().__init__(media, caption, parse_mode, caption_entities)
 

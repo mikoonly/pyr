@@ -19,15 +19,12 @@
 from typing import Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class StartBot:
     async def start_bot(
-        self: "pyrogram.Client",
-        bot: Union[int, str],
-        start_param: str = ""
+        self: "pyrogram.Client", bot: Union[int, str], start_param: str = ""
     ) -> bool:
         """Start bot
 
@@ -56,14 +53,15 @@ class StartBot:
                 bot=await self.resolve_peer(bot),
                 peer=raw.types.InputPeerSelf(),
                 random_id=self.rnd_id(),
-                start_param=start_param
+                start_param=start_param,
             )
         )
 
         for i in r.updates:
             if isinstance(i, raw.types.UpdateNewMessage):
                 return await types.Message._parse(
-                    self, i.message,
+                    self,
+                    i.message,
                     {i.id: i for i in r.users},
-                    {i.id: i for i in r.chats}
+                    {i.id: i for i in r.chats},
                 )

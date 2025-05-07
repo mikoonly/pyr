@@ -17,6 +17,7 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from pyrogram import raw
+
 from ..object import Object
 
 
@@ -26,16 +27,12 @@ class InputReplyToStory(Object):
     Parameters:
         user_id (:obj:`~pyrogram.raw.types.InputUser`):
             An InputUser.
-            
+
         story_id (``int``):
             Unique identifier for the target story.
     """
 
-    def __init__(
-        self, *,
-        user_id: "raw.types.InputUser" = None,
-        story_id: int = None
-    ):
+    def __init__(self, *, user_id: "raw.types.InputUser" = None, story_id: int = None):
         super().__init__()
 
         self.user_id = user_id
@@ -43,6 +40,5 @@ class InputReplyToStory(Object):
 
     def write(self):
         return raw.types.InputReplyToStory(
-            user_id=self.user_id,
-            story_id=self.story_id
+            user_id=self.user_id, story_id=self.story_id
         ).write()

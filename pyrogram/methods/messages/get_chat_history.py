@@ -17,10 +17,10 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from typing import Union, Optional, AsyncGenerator
+from typing import AsyncGenerator, Optional, Union
 
 import pyrogram
-from pyrogram import types, raw, utils
+from pyrogram import raw, types, utils
 
 
 async def get_chunk(
@@ -41,9 +41,9 @@ async def get_chunk(
             limit=limit,
             max_id=0,
             min_id=0,
-            hash=0
+            hash=0,
         ),
-        sleep_threshold=60
+        sleep_threshold=60,
     )
 
     return await utils.parse_messages(client, messages, replies=0)
@@ -56,7 +56,7 @@ class GetChatHistory:
         limit: int = 0,
         offset: int = 0,
         offset_id: int = 0,
-        offset_date: datetime = utils.zero_datetime()
+        offset_date: datetime = utils.zero_datetime(),
     ) -> Optional[AsyncGenerator["types.Message", None]]:
         """Get messages from a chat history.
 
@@ -104,7 +104,7 @@ class GetChatHistory:
                 limit=limit,
                 offset=offset,
                 from_message_id=offset_id,
-                from_date=offset_date
+                from_date=offset_date,
             )
 
             if not messages:

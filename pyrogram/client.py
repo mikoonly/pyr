@@ -29,29 +29,29 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime, timedelta
 from hashlib import sha256
 from importlib import import_module
-from io import StringIO, BytesIO
+from io import BytesIO, StringIO
 from mimetypes import MimeTypes
 from pathlib import Path
-from typing import Union, List, Optional, Callable, AsyncGenerator
+from typing import AsyncGenerator, Callable, List, Optional, Union
 
 import pyrogram
-from pyrogram import __version__, __license__
-from pyrogram import enums
-from pyrogram import raw
-from pyrogram import utils
+from pyrogram import __license__, __version__, enums, raw, utils
 from pyrogram.crypto import aes
-from pyrogram.errors import CDNFileHashMismatch
 from pyrogram.errors import (
+    AuthBytesInvalid,
+    BadRequest,
+    CDNFileHashMismatch,
+    ChannelPrivate,
     SessionPasswordNeeded,
-    VolumeLocNotFound, ChannelPrivate,
-    BadRequest, AuthBytesInvalid
+    VolumeLocNotFound,
 )
 from pyrogram.handlers.handler import Handler
 from pyrogram.methods import Methods
 from pyrogram.session import Auth, Session
 from pyrogram.storage import FileStorage, MemoryStorage
-from pyrogram.types import User, TermsOfService
+from pyrogram.types import TermsOfService, User
 from pyrogram.utils import ainput
+
 from .dispatcher import Dispatcher
 from .file_id import FileId, FileType, ThumbnailSource
 from .mime_types import mime_types
@@ -187,7 +187,9 @@ class Client(Methods):
 
     PARENT_DIR = Path(sys.argv[0]).parent
 
-    INVITE_LINK_RE = re.compile(r"^(?:https?://)?(?:www\.)?(?:t(?:elegram)?\.(?:org|me|dog)/(?:joinchat/|\+))([\w-]+)$")
+    INVITE_LINK_RE = re.compile(
+        r"^(?:https?://)?(?:www\.)?(?:t(?:elegram)?\.(?:org|me|dog)/(?:joinchat/|\+))([\w-]+)$"
+    )
     WORKERS = min(32, (os.cpu_count() or 0) + 4)  # os.cpu_count() can be None
     WORKDIR = PARENT_DIR
 
@@ -225,7 +227,7 @@ class Client(Methods):
         takeout: bool = None,
         sleep_threshold: int = Session.SLEEP_THRESHOLD,
         hide_password: bool = False,
-        max_concurrent_transmissions: int = MAX_CONCURRENT_TRANSMISSIONS
+        max_concurrent_transmissions: int = MAX_CONCURRENT_TRANSMISSIONS,
     ):
         super().__init__()
 
@@ -319,13 +321,17 @@ class Client(Methods):
     async def updates_watchdog(self):
         while True:
             try:
-                await asyncio.wait_for(self.updates_watchdog_event.wait(), self.UPDATES_WATCHDOG_INTERVAL)
+                await asyncio.wait_for(
+                    self.updates_watchdog_event.wait(), self.UPDATES_WATCHDOG_INTERVAL
+                )
             except asyncio.TimeoutError:
                 pass
             else:
                 break
 
-            if datetime.now() - self.last_update_time > timedelta(seconds=self.UPDATES_WATCHDOG_INTERVAL):
+            if datetime.now() - self.last_update_time > timedelta(
+                seconds=self.UPDATES_WATCHDOG_INTERVAL
+            ):
                 await self.invoke(raw.functions.updates.GetState())
 
     async def authorize(self) -> User:
@@ -333,8 +339,10 @@ class Client(Methods):
             return await self.sign_in_bot(self.bot_token)
 
         print(f"Welcome to Pyrogram (version {__version__})")
-        print(f"Pyrogram is free software and comes with ABSOLUTELY NO WARRANTY. Licensed\n"
-              f"under the terms of the {__license__}.\n")
+        print(
+            f"Pyrogram is free software and comes with ABSOLUTELY NO WARRANTY. Licensed\n"
+            f"under the terms of the {__license__}.\n"
+        )
 
         while True:
             try:
@@ -345,7 +353,9 @@ class Client(Methods):
                         if not value:
                             continue
 
-                        confirm = (await ainput(f'Is "{value}" correct? (y/N): ')).lower()
+                        confirm = (
+                            await ainput(f'Is "{value}" correct? (y/N): ')
+                        ).lower()
 
                         if confirm == "y":
                             break
@@ -370,17 +380,21 @@ class Client(Methods):
             enums.SentCodeType.CALL: "phone call",
             enums.SentCodeType.FLASH_CALL: "phone flash call",
             enums.SentCodeType.FRAGMENT_SMS: "Fragment SMS",
-            enums.SentCodeType.EMAIL_CODE: "email code"
+            enums.SentCodeType.EMAIL_CODE: "email code",
         }
 
-        print(f"The confirmation code has been sent via {sent_code_descriptions[sent_code.type]}")
+        print(
+            f"The confirmation code has been sent via {sent_code_descriptions[sent_code.type]}"
+        )
 
         while True:
             if not self.phone_code:
                 self.phone_code = await ainput("Enter confirmation code: ")
 
             try:
-                signed_in = await self.sign_in(self.phone_number, sent_code.phone_code_hash, self.phone_code)
+                signed_in = await self.sign_in(
+                    self.phone_number, sent_code.phone_code_hash, self.phone_code
+                )
             except BadRequest as e:
                 print(e.MESSAGE)
                 self.phone_code = None
@@ -391,7 +405,10 @@ class Client(Methods):
                     print("Password hint: {}".format(await self.get_password_hint()))
 
                     if not self.password:
-                        self.password = await ainput("Enter password (empty to recover): ", hide=self.hide_password)
+                        self.password = await ainput(
+                            "Enter password (empty to recover): ",
+                            hide=self.hide_password,
+                        )
 
                     try:
                         if not self.password:
@@ -399,13 +416,19 @@ class Client(Methods):
 
                             if confirm == "y":
                                 email_pattern = await self.send_recovery_code()
-                                print(f"The recovery code has been sent to {email_pattern}")
+                                print(
+                                    f"The recovery code has been sent to {email_pattern}"
+                                )
 
                                 while True:
-                                    recovery_code = await ainput("Enter recovery code: ")
+                                    recovery_code = await ainput(
+                                        "Enter recovery code: "
+                                    )
 
                                     try:
-                                        return await self.recover_password(recovery_code)
+                                        return await self.recover_password(
+                                            recovery_code
+                                        )
                                     except BadRequest as e:
                                         print(e.MESSAGE)
                                     except Exception as e:
@@ -430,10 +453,7 @@ class Client(Methods):
 
             try:
                 signed_up = await self.sign_up(
-                    self.phone_number,
-                    sent_code.phone_code_hash,
-                    first_name,
-                    last_name
+                    self.phone_number, sent_code.phone_code_hash, first_name, last_name
                 )
             except BadRequest as e:
                 print(e.MESSAGE)
@@ -484,7 +504,9 @@ class Client(Methods):
 
         self.parse_mode = parse_mode
 
-    async def fetch_peers(self, peers: List[Union[raw.types.User, raw.types.Chat, raw.types.Channel]]) -> bool:
+    async def fetch_peers(
+        self, peers: List[Union[raw.types.User, raw.types.Chat, raw.types.Channel]]
+    ) -> bool:
         is_min = False
         parsed_peers = []
 
@@ -500,9 +522,9 @@ class Client(Methods):
                 peer_id = peer.id
                 access_hash = peer.access_hash
                 username = (
-                    peer.username.lower() if peer.username
-                    else peer.usernames[0].username.lower() if peer.usernames
-                    else None
+                    peer.username.lower()
+                    if peer.username
+                    else peer.usernames[0].username.lower() if peer.usernames else None
                 )
                 phone_number = peer.phone
                 peer_type = "bot" if peer.bot else "user"
@@ -514,9 +536,9 @@ class Client(Methods):
                 peer_id = utils.get_channel_id(peer.id)
                 access_hash = peer.access_hash
                 username = (
-                    peer.username.lower() if peer.username
-                    else peer.usernames[0].username.lower() if peer.usernames
-                    else None
+                    peer.username.lower()
+                    if peer.username
+                    else peer.usernames[0].username.lower() if peer.usernames else None
                 )
                 peer_type = "channel" if peer.broadcast else "supergroup"
             elif isinstance(peer, raw.types.ChannelForbidden):
@@ -526,7 +548,9 @@ class Client(Methods):
             else:
                 continue
 
-            parsed_peers.append((peer_id, access_hash, peer_type, username, phone_number))
+            parsed_peers.append(
+                (peer_id, access_hash, peer_type, username, phone_number)
+            )
 
         await self.storage.update_peers(parsed_peers)
 
@@ -536,21 +560,21 @@ class Client(Methods):
         self.last_update_time = datetime.now()
 
         if isinstance(updates, (raw.types.Updates, raw.types.UpdatesCombined)):
-            is_min = any((
-                await self.fetch_peers(updates.users),
-                await self.fetch_peers(updates.chats),
-            ))
+            is_min = any(
+                (
+                    await self.fetch_peers(updates.users),
+                    await self.fetch_peers(updates.chats),
+                )
+            )
 
             users = {u.id: u for u in updates.users}
             chats = {c.id: c for c in updates.chats}
 
             for update in updates.updates:
                 channel_id = getattr(
-                    getattr(
-                        getattr(
-                            update, "message", None
-                        ), "peer_id", None
-                    ), "channel_id", None
+                    getattr(getattr(update, "message", None), "peer_id", None),
+                    "channel_id",
+                    None,
                 ) or getattr(update, "channel_id", None)
 
                 pts = getattr(update, "pts", None)
@@ -566,47 +590,57 @@ class Client(Methods):
                         try:
                             diff = await self.invoke(
                                 raw.functions.updates.GetChannelDifference(
-                                    channel=await self.resolve_peer(utils.get_channel_id(channel_id)),
+                                    channel=await self.resolve_peer(
+                                        utils.get_channel_id(channel_id)
+                                    ),
                                     filter=raw.types.ChannelMessagesFilter(
-                                        ranges=[raw.types.MessageRange(
-                                            min_id=update.message.id,
-                                            max_id=update.message.id
-                                        )]
+                                        ranges=[
+                                            raw.types.MessageRange(
+                                                min_id=update.message.id,
+                                                max_id=update.message.id,
+                                            )
+                                        ]
                                     ),
                                     pts=pts - pts_count,
-                                    limit=pts
+                                    limit=pts,
                                 )
                             )
                         except ChannelPrivate:
                             pass
                         else:
-                            if not isinstance(diff, raw.types.updates.ChannelDifferenceEmpty):
+                            if not isinstance(
+                                diff, raw.types.updates.ChannelDifferenceEmpty
+                            ):
                                 users.update({u.id: u for u in diff.users})
                                 chats.update({c.id: c for c in diff.chats})
 
                 self.dispatcher.updates_queue.put_nowait((update, users, chats))
-        elif isinstance(updates, (raw.types.UpdateShortMessage, raw.types.UpdateShortChatMessage)):
+        elif isinstance(
+            updates, (raw.types.UpdateShortMessage, raw.types.UpdateShortChatMessage)
+        ):
             diff = await self.invoke(
                 raw.functions.updates.GetDifference(
-                    pts=updates.pts - updates.pts_count,
-                    date=updates.date,
-                    qts=-1
+                    pts=updates.pts - updates.pts_count, date=updates.date, qts=-1
                 )
             )
 
             if diff.new_messages:
-                self.dispatcher.updates_queue.put_nowait((
-                    raw.types.UpdateNewMessage(
-                        message=diff.new_messages[0],
-                        pts=updates.pts,
-                        pts_count=updates.pts_count
-                    ),
-                    {u.id: u for u in diff.users},
-                    {c.id: c for c in diff.chats}
-                ))
+                self.dispatcher.updates_queue.put_nowait(
+                    (
+                        raw.types.UpdateNewMessage(
+                            message=diff.new_messages[0],
+                            pts=updates.pts,
+                            pts_count=updates.pts_count,
+                        ),
+                        {u.id: u for u in diff.users},
+                        {c.id: c for c in diff.chats},
+                    )
+                )
             else:
                 if diff.other_updates:  # The other_updates list can be empty
-                    self.dispatcher.updates_queue.put_nowait((diff.other_updates[0], {}, {}))
+                    self.dispatcher.updates_queue.put_nowait(
+                        (diff.other_updates[0], {}, {})
+                    )
         elif isinstance(updates, raw.types.UpdateShort):
             self.dispatcher.updates_queue.put_nowait((updates.update, {}, {}))
         elif isinstance(updates, raw.types.UpdatesTooLong):
@@ -615,17 +649,21 @@ class Client(Methods):
     async def load_session(self):
         await self.storage.open()
 
-        session_empty = any([
-            await self.storage.test_mode() is None,
-            await self.storage.auth_key() is None,
-            await self.storage.user_id() is None,
-            await self.storage.is_bot() is None
-        ])
+        session_empty = any(
+            [
+                await self.storage.test_mode() is None,
+                await self.storage.auth_key() is None,
+                await self.storage.user_id() is None,
+                await self.storage.is_bot() is None,
+            ]
+        )
 
         if session_empty:
             if not self.api_id or not self.api_hash:
-                raise AttributeError("The API key is required for new authorizations. "
-                                     "More info: https://docs.pyrogram.org/start/auth")
+                raise AttributeError(
+                    "The API key is required for new authorizations. "
+                    "More info: https://docs.pyrogram.org/start/auth"
+                )
 
             await self.storage.api_id(self.api_id)
 
@@ -635,8 +673,7 @@ class Client(Methods):
             await self.storage.test_mode(self.test_mode)
             await self.storage.auth_key(
                 await Auth(
-                    self, await self.storage.dc_id(),
-                    await self.storage.test_mode()
+                    self, await self.storage.dc_id(), await self.storage.test_mode()
                 ).create()
             )
             await self.storage.user_id(None)
@@ -649,13 +686,17 @@ class Client(Methods):
                 else:
                     while True:
                         try:
-                            value = int(await ainput("Enter the api_id part of the API key: "))
+                            value = int(
+                                await ainput("Enter the api_id part of the API key: ")
+                            )
 
                             if value <= 0:
                                 print("Invalid value")
                                 continue
 
-                            confirm = (await ainput(f'Is "{value}" correct? (y/N): ')).lower()
+                            confirm = (
+                                await ainput(f'Is "{value}" correct? (y/N): ')
+                            ).lower()
 
                             if confirm == "y":
                                 await self.storage.api_id(value)
@@ -685,18 +726,27 @@ class Client(Methods):
 
             if not include:
                 for path in sorted(Path(root.replace(".", "/")).rglob("*.py")):
-                    module_path = '.'.join(path.parent.parts + (path.stem,))
+                    module_path = ".".join(path.parent.parts + (path.stem,))
                     module = import_module(module_path)
 
                     for name in vars(module).keys():
                         # noinspection PyBroadException
                         try:
                             for handler, group in getattr(module, name).handlers:
-                                if isinstance(handler, Handler) and isinstance(group, int):
+                                if isinstance(handler, Handler) and isinstance(
+                                    group, int
+                                ):
                                     self.add_handler(handler, group)
 
-                                    log.info('[{}] [LOAD] {}("{}") in group {} from "{}"'.format(
-                                        self.name, type(handler).__name__, name, group, module_path))
+                                    log.info(
+                                        '[{}] [LOAD] {}("{}") in group {} from "{}"'.format(
+                                            self.name,
+                                            type(handler).__name__,
+                                            name,
+                                            group,
+                                            module_path,
+                                        )
+                                    )
 
                                     count += 1
                         except Exception:
@@ -709,11 +759,19 @@ class Client(Methods):
                     try:
                         module = import_module(module_path)
                     except ImportError:
-                        log.warning('[%s] [LOAD] Ignoring non-existent module "%s"', self.name, module_path)
+                        log.warning(
+                            '[%s] [LOAD] Ignoring non-existent module "%s"',
+                            self.name,
+                            module_path,
+                        )
                         continue
 
                     if "__path__" in dir(module):
-                        log.warning('[%s] [LOAD] Ignoring namespace "%s"', self.name, module_path)
+                        log.warning(
+                            '[%s] [LOAD] Ignoring namespace "%s"',
+                            self.name,
+                            module_path,
+                        )
                         continue
 
                     if handlers is None:
@@ -724,17 +782,29 @@ class Client(Methods):
                         # noinspection PyBroadException
                         try:
                             for handler, group in getattr(module, name).handlers:
-                                if isinstance(handler, Handler) and isinstance(group, int):
+                                if isinstance(handler, Handler) and isinstance(
+                                    group, int
+                                ):
                                     self.add_handler(handler, group)
 
-                                    log.info('[{}] [LOAD] {}("{}") in group {} from "{}"'.format(
-                                        self.name, type(handler).__name__, name, group, module_path))
+                                    log.info(
+                                        '[{}] [LOAD] {}("{}") in group {} from "{}"'.format(
+                                            self.name,
+                                            type(handler).__name__,
+                                            name,
+                                            group,
+                                            module_path,
+                                        )
+                                    )
 
                                     count += 1
                         except Exception:
                             if warn_non_existent_functions:
-                                log.warning('[{}] [LOAD] Ignoring non-existent function "{}" from "{}"'.format(
-                                    self.name, name, module_path))
+                                log.warning(
+                                    '[{}] [LOAD] Ignoring non-existent function "{}" from "{}"'.format(
+                                        self.name, name, module_path
+                                    )
+                                )
 
             if exclude:
                 for path, handlers in exclude:
@@ -744,11 +814,19 @@ class Client(Methods):
                     try:
                         module = import_module(module_path)
                     except ImportError:
-                        log.warning('[%s] [UNLOAD] Ignoring non-existent module "%s"', self.name, module_path)
+                        log.warning(
+                            '[%s] [UNLOAD] Ignoring non-existent module "%s"',
+                            self.name,
+                            module_path,
+                        )
                         continue
 
                     if "__path__" in dir(module):
-                        log.warning('[%s] [UNLOAD] Ignoring namespace "%s"', self.name, module_path)
+                        log.warning(
+                            '[%s] [UNLOAD] Ignoring namespace "%s"',
+                            self.name,
+                            module_path,
+                        )
                         continue
 
                     if handlers is None:
@@ -759,33 +837,55 @@ class Client(Methods):
                         # noinspection PyBroadException
                         try:
                             for handler, group in getattr(module, name).handlers:
-                                if isinstance(handler, Handler) and isinstance(group, int):
+                                if isinstance(handler, Handler) and isinstance(
+                                    group, int
+                                ):
                                     self.remove_handler(handler, group)
 
-                                    log.info('[{}] [UNLOAD] {}("{}") from group {} in "{}"'.format(
-                                        self.name, type(handler).__name__, name, group, module_path))
+                                    log.info(
+                                        '[{}] [UNLOAD] {}("{}") from group {} in "{}"'.format(
+                                            self.name,
+                                            type(handler).__name__,
+                                            name,
+                                            group,
+                                            module_path,
+                                        )
+                                    )
 
                                     count -= 1
                         except Exception:
                             if warn_non_existent_functions:
-                                log.warning('[{}] [UNLOAD] Ignoring non-existent function "{}" from "{}"'.format(
-                                    self.name, name, module_path))
+                                log.warning(
+                                    '[{}] [UNLOAD] Ignoring non-existent function "{}" from "{}"'.format(
+                                        self.name, name, module_path
+                                    )
+                                )
 
             if count > 0:
-                log.info('[{}] Successfully loaded {} plugin{} from "{}"'.format(
-                    self.name, count, "s" if count > 1 else "", root))
+                log.info(
+                    '[{}] Successfully loaded {} plugin{} from "{}"'.format(
+                        self.name, count, "s" if count > 1 else "", root
+                    )
+                )
             else:
                 log.warning('[%s] No plugin loaded from "%s"', self.name, root)
 
     async def handle_download(self, packet):
-        file_id, directory, file_name, in_memory, file_size, progress, progress_args = packet
+        file_id, directory, file_name, in_memory, file_size, progress, progress_args = (
+            packet
+        )
 
         os.makedirs(directory, exist_ok=True) if not in_memory else None
-        temp_file_path = os.path.abspath(re.sub("\\\\", "/", os.path.join(directory, file_name))) + ".temp"
+        temp_file_path = (
+            os.path.abspath(re.sub("\\\\", "/", os.path.join(directory, file_name)))
+            + ".temp"
+        )
         file = BytesIO() if in_memory else open(temp_file_path, "wb")
 
         try:
-            async for chunk in self.get_file(file_id, file_size, 0, 0, progress, progress_args):
+            async for chunk in self.get_file(
+                file_id, file_size, 0, 0, progress, progress_args
+            ):
                 file.write(chunk)
         except BaseException as e:
             if not in_memory:
@@ -813,7 +913,7 @@ class Client(Methods):
         limit: int = 0,
         offset: int = 0,
         progress: Callable = None,
-        progress_args: tuple = ()
+        progress_args: tuple = (),
     ) -> Optional[AsyncGenerator[bytes, None]]:
         async with self.get_file_semaphore:
             file_type = file_id.file_type
@@ -821,38 +921,35 @@ class Client(Methods):
             if file_type == FileType.CHAT_PHOTO:
                 if file_id.chat_id > 0:
                     peer = raw.types.InputPeerUser(
-                        user_id=file_id.chat_id,
-                        access_hash=file_id.chat_access_hash
+                        user_id=file_id.chat_id, access_hash=file_id.chat_access_hash
                     )
                 else:
                     if file_id.chat_access_hash == 0:
-                        peer = raw.types.InputPeerChat(
-                            chat_id=-file_id.chat_id
-                        )
+                        peer = raw.types.InputPeerChat(chat_id=-file_id.chat_id)
                     else:
                         peer = raw.types.InputPeerChannel(
                             channel_id=utils.get_channel_id(file_id.chat_id),
-                            access_hash=file_id.chat_access_hash
+                            access_hash=file_id.chat_access_hash,
                         )
 
                 location = raw.types.InputPeerPhotoFileLocation(
                     peer=peer,
                     photo_id=file_id.media_id,
-                    big=file_id.thumbnail_source == ThumbnailSource.CHAT_PHOTO_BIG
+                    big=file_id.thumbnail_source == ThumbnailSource.CHAT_PHOTO_BIG,
                 )
             elif file_type == FileType.PHOTO:
                 location = raw.types.InputPhotoFileLocation(
                     id=file_id.media_id,
                     access_hash=file_id.access_hash,
                     file_reference=file_id.file_reference,
-                    thumb_size=file_id.thumbnail_size
+                    thumb_size=file_id.thumbnail_size,
                 )
             else:
                 location = raw.types.InputDocumentFileLocation(
                     id=file_id.media_id,
                     access_hash=file_id.access_hash,
                     file_reference=file_id.file_reference,
-                    thumb_size=file_id.thumbnail_size
+                    thumb_size=file_id.thumbnail_size,
                 )
 
             current = 0
@@ -866,28 +963,30 @@ class Client(Methods):
                 session = self.media_sessions.get(dc_id)
                 if not session:
                     session = self.media_sessions[dc_id] = Session(
-                        self, dc_id,
-                        await Auth(self, dc_id, await self.storage.test_mode()).create()
-                        if dc_id != await self.storage.dc_id()
-                        else await self.storage.auth_key(),
+                        self,
+                        dc_id,
+                        (
+                            await Auth(
+                                self, dc_id, await self.storage.test_mode()
+                            ).create()
+                            if dc_id != await self.storage.dc_id()
+                            else await self.storage.auth_key()
+                        ),
                         await self.storage.test_mode(),
-                        is_media=True
+                        is_media=True,
                     )
                     await session.start()
 
                     if dc_id != await self.storage.dc_id():
                         for _ in range(3):
                             exported_auth = await self.invoke(
-                                raw.functions.auth.ExportAuthorization(
-                                    dc_id=dc_id
-                                )
+                                raw.functions.auth.ExportAuthorization(dc_id=dc_id)
                             )
 
                             try:
                                 await session.invoke(
                                     raw.functions.auth.ImportAuthorization(
-                                        id=exported_auth.id,
-                                        bytes=exported_auth.bytes
+                                        id=exported_auth.id, bytes=exported_auth.bytes
                                     )
                                 )
                             except AuthBytesInvalid:
@@ -899,11 +998,9 @@ class Client(Methods):
 
                 r = await session.invoke(
                     raw.functions.upload.GetFile(
-                        location=location,
-                        offset=offset_bytes,
-                        limit=chunk_size
+                        location=location, offset=offset_bytes, limit=chunk_size
                     ),
-                    sleep_threshold=30
+                    sleep_threshold=30,
                 )
 
                 if isinstance(r, raw.types.upload.File):
@@ -918,11 +1015,13 @@ class Client(Methods):
                         if progress:
                             func = functools.partial(
                                 progress,
-                                min(offset_bytes, file_size)
-                                if file_size != 0
-                                else offset_bytes,
+                                (
+                                    min(offset_bytes, file_size)
+                                    if file_size != 0
+                                    else offset_bytes
+                                ),
                                 file_size,
-                                *progress_args
+                                *progress_args,
                             )
 
                             if inspect.iscoroutinefunction(progress):
@@ -935,17 +1034,21 @@ class Client(Methods):
 
                         r = await session.invoke(
                             raw.functions.upload.GetFile(
-                                location=location,
-                                offset=offset_bytes,
-                                limit=chunk_size
+                                location=location, offset=offset_bytes, limit=chunk_size
                             ),
-                            sleep_threshold=30
+                            sleep_threshold=30,
                         )
 
                 elif isinstance(r, raw.types.upload.FileCdnRedirect):
                     cdn_session = Session(
-                        self, r.dc_id, await Auth(self, r.dc_id, await self.storage.test_mode()).create(),
-                        await self.storage.test_mode(), is_media=True, is_cdn=True
+                        self,
+                        r.dc_id,
+                        await Auth(
+                            self, r.dc_id, await self.storage.test_mode()
+                        ).create(),
+                        await self.storage.test_mode(),
+                        is_media=True,
+                        is_cdn=True,
                     )
 
                     try:
@@ -956,7 +1059,7 @@ class Client(Methods):
                                 raw.functions.upload.GetCdnFile(
                                     file_token=r.file_token,
                                     offset=offset_bytes,
-                                    limit=chunk_size
+                                    limit=chunk_size,
                                 )
                             )
 
@@ -965,7 +1068,7 @@ class Client(Methods):
                                     await session.invoke(
                                         raw.functions.upload.ReuploadCdnFile(
                                             file_token=r.file_token,
-                                            request_token=r2.request_token
+                                            request_token=r2.request_token,
                                         )
                                     )
                                 except VolumeLocNotFound:
@@ -982,22 +1085,23 @@ class Client(Methods):
                                 bytearray(
                                     r.encryption_iv[:-4]
                                     + (offset_bytes // 16).to_bytes(4, "big")
-                                )
+                                ),
                             )
 
                             hashes = await session.invoke(
                                 raw.functions.upload.GetCdnFileHashes(
-                                    file_token=r.file_token,
-                                    offset=offset_bytes
+                                    file_token=r.file_token, offset=offset_bytes
                                 )
                             )
 
                             # https://core.telegram.org/cdn#verifying-files
                             for i, h in enumerate(hashes):
-                                cdn_chunk = decrypted_chunk[h.limit * i: h.limit * (i + 1)]
+                                cdn_chunk = decrypted_chunk[
+                                    h.limit * i : h.limit * (i + 1)
+                                ]
                                 CDNFileHashMismatch.check(
                                     h.hash == sha256(cdn_chunk).digest(),
-                                    "h.hash == sha256(cdn_chunk).digest()"
+                                    "h.hash == sha256(cdn_chunk).digest()",
                                 )
 
                             yield decrypted_chunk
@@ -1008,9 +1112,13 @@ class Client(Methods):
                             if progress:
                                 func = functools.partial(
                                     progress,
-                                    min(offset_bytes, file_size) if file_size != 0 else offset_bytes,
+                                    (
+                                        min(offset_bytes, file_size)
+                                        if file_size != 0
+                                        else offset_bytes
+                                    ),
                                     file_size,
-                                    *progress_args
+                                    *progress_args,
                                 )
 
                                 if inspect.iscoroutinefunction(progress):

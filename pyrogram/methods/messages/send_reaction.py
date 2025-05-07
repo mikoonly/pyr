@@ -29,7 +29,7 @@ class SendReaction:
         message_id: int = None,
         story_id: int = None,
         emoji: Union[int, str] = None,
-        big: bool = False
+        big: bool = False,
     ) -> bool:
         """Send a reaction to a message.
 
@@ -81,7 +81,7 @@ class SendReaction:
                 peer=await self.resolve_peer(chat_id),
                 msg_id=message_id,
                 reaction=emoji,
-                big=big
+                big=big,
             )
 
         await self.invoke(rpc)

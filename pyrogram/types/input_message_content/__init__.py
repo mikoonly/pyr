@@ -22,5 +22,8 @@ from .input_reply_to_story import InputReplyToStory
 from .input_text_message_content import InputTextMessageContent
 
 __all__ = [
-    "InputMessageContent", "InputReplyToMessage", "InputReplyToStory", "InputTextMessageContent"
+    "InputMessageContent",
+    "InputReplyToMessage",
+    "InputReplyToStory",
+    "InputTextMessageContent",
 ]

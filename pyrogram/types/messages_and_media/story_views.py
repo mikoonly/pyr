@@ -16,9 +16,12 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from pyrogram import raw, types
 from typing import List
+
+from pyrogram import raw, types
+
 from ..object import Object
+
 
 class StoryViews(Object):
     """Contains information about a story viewers.
@@ -44,13 +47,14 @@ class StoryViews(Object):
     """
 
     def __init__(
-            self, *,
-            views_count: int,
-            has_viewers: bool = None,
-            forwards_count: int = None,
-            reactions: List["types.Reaction"] = None,
-            reactions_count: int = None,
-            recent_viewers: List[int] = None
+        self,
+        *,
+        views_count: int,
+        has_viewers: bool = None,
+        forwards_count: int = None,
+        reactions: List["types.Reaction"] = None,
+        reactions_count: int = None,
+        recent_viewers: List[int] = None
     ):
         super().__init__()
 
@@ -70,6 +74,7 @@ class StoryViews(Object):
             reactions=[
                 types.Reaction._parse_count(client, reaction)
                 for reaction in getattr(storyviews, "reactions", [])
-            ] or None,
+            ]
+            or None,
             recent_viewers=getattr(storyviews, "recent_viewers", None) or None,
         )

@@ -16,11 +16,10 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Union, Iterable
+from typing import Iterable, Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetStories:
@@ -60,12 +59,7 @@ class GetStories:
         ids = list(story_ids) if is_iterable else [story_ids]
 
         peer = await self.resolve_peer(chat_id)
-        r = await self.invoke(
-            raw.functions.stories.GetStoriesByID(
-                peer=peer,
-                id=ids
-            )
-        )
+        r = await self.invoke(raw.functions.stories.GetStoriesByID(peer=peer, id=ids))
 
         stories = []
 
@@ -73,14 +67,6 @@ class GetStories:
         chats = {i.id: i for i in r.chats}
 
         for story in r.stories:
-            stories.append(
-                await types.Story._parse(
-                    self,
-                    story,
-                    users,
-                    chats,
-                    peer
-                )
-            )
+            stories.append(await types.Story._parse(self, story, users, chats, peer))
 
         return types.List(stories) if is_iterable else stories[0]

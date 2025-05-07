@@ -16,18 +16,17 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Union, List
+from typing import List, Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class CreateGroup:
     async def create_group(
         self: "pyrogram.Client",
         title: str,
-        users: Union[Union[int, str], List[Union[int, str]]]
+        users: Union[Union[int, str], List[Union[int, str]]],
     ) -> "types.Chat":
         """Create a new basic group.
 
@@ -59,8 +58,7 @@ class CreateGroup:
 
         r = await self.invoke(
             raw.functions.messages.CreateChat(
-                title=title,
-                users=[await self.resolve_peer(u) for u in users]
+                title=title, users=[await self.resolve_peer(u) for u in users]
             )
         )
 

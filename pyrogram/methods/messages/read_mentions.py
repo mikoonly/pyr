@@ -47,9 +47,7 @@ class ReadMentions:
                 await app.read_mentions(chat_id)
         """
         r = await self.invoke(
-            raw.functions.messages.ReadMentions(
-                peer=await self.resolve_peer(chat_id)
-            )
+            raw.functions.messages.ReadMentions(peer=await self.resolve_peer(chat_id))
         )
 
         return bool(r)

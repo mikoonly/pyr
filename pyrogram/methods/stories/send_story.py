@@ -18,11 +18,12 @@
 
 import os
 import re
-from typing import List, Union, BinaryIO, Callable
+from typing import BinaryIO, Callable, List, Union
 
 import pyrogram
-from pyrogram import enums, raw, types, utils, StopTransmission
+from pyrogram import StopTransmission, enums, raw, types, utils
 from pyrogram.errors import FilePartMissing
+
 
 class SendStory:
     async def send_story(
@@ -45,7 +46,7 @@ class SendStory:
         parse_mode: "enums.ParseMode" = None,
         caption_entities: List["types.MessageEntity"] = None,
         progress: Callable = None,
-        progress_args: tuple = ()
+        progress_args: tuple = (),
     ) -> "types.Story":
         """Send new story.
 
@@ -142,13 +143,17 @@ class SendStory:
         """
         # TODO: media_areas
 
-        message, entities = (await utils.parse_text_entities(self, caption, parse_mode, caption_entities)).values()
+        message, entities = (
+            await utils.parse_text_entities(self, caption, parse_mode, caption_entities)
+        ).values()
 
         try:
             if isinstance(media, str):
                 if os.path.isfile(media):
                     thumb = await self.save_file(thumb)
-                    file = await self.save_file(media, progress=progress, progress_args=progress_args)
+                    file = await self.save_file(
+                        media, progress=progress, progress_args=progress_args
+                    )
                     mime_type = self.guess_mime_type(file.name)
                     if mime_type == "video/mp4":
                         media = raw.types.InputMediaUploadedDocument(
@@ -161,8 +166,10 @@ class SendStory:
                                     w=width,
                                     h=height,
                                 ),
-                                raw.types.DocumentAttributeFilename(file_name=file_name or os.path.basename(media))
-                            ]
+                                raw.types.DocumentAttributeFilename(
+                                    file_name=file_name or os.path.basename(media)
+                                ),
+                            ],
                         )
                     else:
                         media = raw.types.InputMediaUploadedPhoto(
@@ -182,7 +189,9 @@ class SendStory:
                     media = utils.get_input_media_from_file_id(media)
             else:
                 thumb = await self.save_file(thumb)
-                file = await self.save_file(media, progress=progress, progress_args=progress_args)
+                file = await self.save_file(
+                    media, progress=progress, progress_args=progress_args
+                )
                 mime_type = self.guess_mime_type(file.name)
                 if mime_type == "video/mp4":
                     media = raw.types.InputMediaUploadedDocument(
@@ -196,8 +205,10 @@ class SendStory:
                                 w=width,
                                 h=height,
                             ),
-                            raw.types.DocumentAttributeFilename(file_name=file_name or media.name)
-                        ]
+                            raw.types.DocumentAttributeFilename(
+                                file_name=file_name or media.name
+                            ),
+                        ],
                     )
                 else:
                     media = raw.types.InputMediaUploadedPhoto(
@@ -210,18 +221,33 @@ class SendStory:
                 if privacy == enums.StoriesPrivacyRules.PUBLIC:
                     privacy_rules.append(raw.types.InputPrivacyValueAllowAll())
                     if disallowed_users:
-                        users = [await self.resolve_peer(user_id) for user_id in disallowed_users]
-                        privacy_rules.append(raw.types.InputPrivacyValueDisallowUsers(users=users))
+                        users = [
+                            await self.resolve_peer(user_id)
+                            for user_id in disallowed_users
+                        ]
+                        privacy_rules.append(
+                            raw.types.InputPrivacyValueDisallowUsers(users=users)
+                        )
                 elif privacy == enums.StoriesPrivacyRules.CONTACTS:
                     privacy_rules = [raw.types.InputPrivacyValueAllowContacts()]
                     if disallowed_users:
-                        users = [await self.resolve_peer(user_id) for user_id in disallowed_users]
-                        privacy_rules.append(raw.types.InputPrivacyValueDisallowUsers(users=users))
+                        users = [
+                            await self.resolve_peer(user_id)
+                            for user_id in disallowed_users
+                        ]
+                        privacy_rules.append(
+                            raw.types.InputPrivacyValueDisallowUsers(users=users)
+                        )
                 elif privacy == enums.StoriesPrivacyRules.CLOSE_FRIENDS:
                     privacy_rules = [raw.types.InputPrivacyValueAllowCloseFriends()]
                     if allowed_users:
-                        users = [await self.resolve_peer(user_id) for user_id in allowed_users]
-                        privacy_rules.append(raw.types.InputPrivacyValueAllowUsers(users=users))
+                        users = [
+                            await self.resolve_peer(user_id)
+                            for user_id in allowed_users
+                        ]
+                        privacy_rules.append(
+                            raw.types.InputPrivacyValueAllowUsers(users=users)
+                        )
                 elif privacy == enums.StoriesPrivacyRules.SELECTED_USERS:
                     _allowed_users = []
                     _allowed_chats = []
@@ -234,9 +260,15 @@ class SendStory:
                             _allowed_chats.append(peer)
 
                     if _allowed_users:
-                        privacy_rules.append(raw.types.InputPrivacyValueAllowUsers(users=_allowed_users))
+                        privacy_rules.append(
+                            raw.types.InputPrivacyValueAllowUsers(users=_allowed_users)
+                        )
                     if _allowed_chats:
-                        privacy_rules.append(raw.types.InputPrivacyValueAllowChatParticipants(chats=_allowed_chats))
+                        privacy_rules.append(
+                            raw.types.InputPrivacyValueAllowChatParticipants(
+                                chats=_allowed_chats
+                            )
+                        )
             else:
                 privacy_rules.append(raw.types.InputPrivacyValueAllowAll())
 
@@ -265,7 +297,7 @@ class SendStory:
                                 i.story,
                                 {i.id: i for i in r.users},
                                 {i.id: i for i in r.chats},
-                                i.peer
+                                i.peer,
                             )
         except StopTransmission:
             return None

@@ -19,8 +19,7 @@
 from typing import Iterable
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class AnswerInlineQuery:
@@ -33,7 +32,7 @@ class AnswerInlineQuery:
         is_personal: bool = False,
         next_offset: str = "",
         switch_pm_text: str = "",
-        switch_pm_parameter: str = ""
+        switch_pm_parameter: str = "",
     ):
         """Send answers to an inline query.
 
@@ -104,9 +103,12 @@ class AnswerInlineQuery:
                 gallery=is_gallery or None,
                 private=is_personal or None,
                 next_offset=next_offset or None,
-                switch_pm=raw.types.InlineBotSwitchPM(
-                    text=switch_pm_text,
-                    start_param=switch_pm_parameter
-                ) if switch_pm_text else None
+                switch_pm=(
+                    raw.types.InlineBotSwitchPM(
+                        text=switch_pm_text, start_param=switch_pm_parameter
+                    )
+                    if switch_pm_text
+                    else None
+                ),
             )
         )

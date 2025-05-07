@@ -16,10 +16,11 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
-from typing import Optional, List
+from typing import List, Optional
 
 import pyrogram
 from pyrogram import raw, types
+
 from ..object import Object
 
 
@@ -44,13 +45,15 @@ class MessageReactions(Object):
     @staticmethod
     def _parse(
         client: "pyrogram.Client",
-        message_reactions: Optional["raw.base.MessageReactions"] = None
+        message_reactions: Optional["raw.base.MessageReactions"] = None,
     ) -> Optional["MessageReactions"]:
         if not message_reactions:
             return None
 
         return MessageReactions(
             client=client,
-            reactions=[types.Reaction._parse_count(client, reaction)
-                       for reaction in message_reactions.results]
+            reactions=[
+                types.Reaction._parse_count(client, reaction)
+                for reaction in message_reactions.results
+            ],
         )

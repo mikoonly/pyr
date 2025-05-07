@@ -20,6 +20,7 @@ from typing import Optional
 
 import pyrogram
 from pyrogram import raw
+
 from ..object import Object
 
 
@@ -58,26 +59,16 @@ class Reaction(Object):
         self.chosen_order = chosen_order
 
     @staticmethod
-    def _parse(
-        client: "pyrogram.Client",
-        reaction: "raw.base.Reaction"
-    ) -> "Reaction":
+    def _parse(client: "pyrogram.Client", reaction: "raw.base.Reaction") -> "Reaction":
         if isinstance(reaction, raw.types.ReactionEmoji):
-            return Reaction(
-                client=client,
-                emoji=reaction.emoticon
-            )
+            return Reaction(client=client, emoji=reaction.emoticon)
 
         if isinstance(reaction, raw.types.ReactionCustomEmoji):
-            return Reaction(
-                client=client,
-                custom_emoji_id=reaction.document_id
-            )
+            return Reaction(client=client, custom_emoji_id=reaction.document_id)
 
     @staticmethod
     def _parse_count(
-        client: "pyrogram.Client",
-        reaction_count: "raw.base.ReactionCount"
+        client: "pyrogram.Client", reaction_count: "raw.base.ReactionCount"
     ) -> "Reaction":
         reaction = Reaction._parse(client, reaction_count.reaction)
         reaction.count = reaction_count.count

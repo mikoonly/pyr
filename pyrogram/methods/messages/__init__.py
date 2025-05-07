@@ -122,6 +122,6 @@ class Messages(
     GetDiscussionRepliesCount,
     StreamMedia,
     TranslateText,
-    GetCustomEmojiStickers
+    GetCustomEmojiStickers,
 ):
     pass

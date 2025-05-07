@@ -19,14 +19,14 @@
 from typing import Optional
 
 import pyrogram
-from pyrogram import raw, enums
-from pyrogram import types
+from pyrogram import enums, raw, types
+
 from ..object import Object
 
 
 class MessageEntity(Object):
     """One special entity in a text message.
-    
+
     For example, hashtags, usernames, URLs, etc.
 
     Parameters:
@@ -51,7 +51,7 @@ class MessageEntity(Object):
         custom_emoji_id (``int``, *optional*):
             For :obj:`~pyrogram.enums.MessageEntityType.CUSTOM_EMOJI` only, unique identifier of the custom emoji.
             Use :meth:`~pyrogram.Client.get_custom_emoji_stickers` to get full information about the sticker.
-            
+
         collapsed (``bool``, *optional*):
              For :obj:`~pyrogram.enums.MessageEntityType.BLOCKQUOTE` only, whether the blockquote expandable.
     """
@@ -67,7 +67,7 @@ class MessageEntity(Object):
         user: "types.User" = None,
         language: str = None,
         custom_emoji_id: int = None,
-        #collapsed: bool = None
+        # collapsed: bool = None
     ):
         super().__init__(client)
 
@@ -78,10 +78,13 @@ class MessageEntity(Object):
         self.user = user
         self.language = language
         self.custom_emoji_id = custom_emoji_id
-      #  self.collapsed = collapsed
+
+    #  self.collapsed = collapsed
 
     @staticmethod
-    def _parse(client, entity: "raw.base.MessageEntity", users: dict) -> Optional["MessageEntity"]:
+    def _parse(
+        client, entity: "raw.base.MessageEntity", users: dict
+    ) -> Optional["MessageEntity"]:
         # Special case for InputMessageEntityMentionName -> MessageEntityType.TEXT_MENTION
         # This happens in case of UpdateShortSentMessage inside send_message() where entities are parsed from the input
         if isinstance(entity, raw.types.InputMessageEntityMentionName):
@@ -99,8 +102,8 @@ class MessageEntity(Object):
             user=types.User._parse(client, users.get(user_id, None)),
             language=getattr(entity, "language", None),
             custom_emoji_id=getattr(entity, "document_id", None),
-        #    collapsed=getattr(entity, "collapsed", None),
-            client=client
+            #    collapsed=getattr(entity, "collapsed", None),
+            client=client,
         )
 
     async def write(self):
@@ -122,11 +125,11 @@ class MessageEntity(Object):
         if self.custom_emoji_id is not None:
             args["document_id"] = self.custom_emoji_id
 
-   #     if self.type not in [
-   #          enums.MessageEntityType.BLOCKQUOTE,
-   #          enums.MessageEntityType.EXPANDABLE_BLOCKQUOTE
-   #      ]:
-   #          args.pop("collapsed")
+        #     if self.type not in [
+        #          enums.MessageEntityType.BLOCKQUOTE,
+        #          enums.MessageEntityType.EXPANDABLE_BLOCKQUOTE
+        #      ]:
+        #          args.pop("collapsed")
 
         entity = self.type.value
 

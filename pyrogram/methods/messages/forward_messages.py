@@ -17,11 +17,10 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 from datetime import datetime
-from typing import Union, List, Iterable
+from typing import Iterable, List, Union
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types
+from pyrogram import raw, types, utils
 
 
 class ForwardMessages:
@@ -33,7 +32,7 @@ class ForwardMessages:
         message_thread_id: int = None,
         disable_notification: bool = None,
         schedule_date: datetime = None,
-        protect_content: bool = None
+        protect_content: bool = None,
     ) -> Union["types.Message", List["types.Message"]]:
         """Forward messages of any kind.
 
@@ -92,7 +91,7 @@ class ForwardMessages:
                 random_id=[self.rnd_id() for _ in message_ids],
                 schedule_date=utils.datetime_to_timestamp(schedule_date),
                 noforwards=protect_content,
-                top_msg_id=message_thread_id
+                top_msg_id=message_thread_id,
             )
         )
 
@@ -102,14 +101,16 @@ class ForwardMessages:
         chats = {i.id: i for i in r.chats}
 
         for i in r.updates:
-            if isinstance(i, (raw.types.UpdateNewMessage,
-                              raw.types.UpdateNewChannelMessage,
-                              raw.types.UpdateNewScheduledMessage)):
+            if isinstance(
+                i,
+                (
+                    raw.types.UpdateNewMessage,
+                    raw.types.UpdateNewChannelMessage,
+                    raw.types.UpdateNewScheduledMessage,
+                ),
+            ):
                 forwarded_messages.append(
-                    await types.Message._parse(
-                        self, i.message,
-                        users, chats
-                    )
+                    await types.Message._parse(self, i.message, users, chats)
                 )
 
         return types.List(forwarded_messages) if is_iterable else forwarded_messages[0]

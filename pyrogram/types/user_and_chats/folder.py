@@ -19,10 +19,10 @@
 from typing import List, Union
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
+from pyrogram import raw, types
+
 from ... import utils
+from ..object import Object
 
 
 class Folder(Object):
@@ -110,7 +110,6 @@ class Folder(Object):
         self.emoji = emoji
         self.has_my_invites = has_my_invites
 
-
     @staticmethod
     def _parse(client, folder: "raw.types.DialogFilter", peers) -> "Folder":
         # TODO: Change types.Chat._parse to types.Dialog._parse
@@ -118,9 +117,31 @@ class Folder(Object):
         return Folder(
             id=folder.id,
             title=folder.title,
-            pinned_peers=types.List(types.Chat._parse_chat(client, peers.get(utils.get_input_peer_id(i), None)) for i in folder.pinned_peers) or None,
-            included_peers=types.List(types.Chat._parse_chat(client, peers.get(utils.get_input_peer_id(i), None)) for i in folder.include_peers) or None,
-            excluded_peers=types.List(types.Chat._parse_chat(client, peers.get(utils.get_input_peer_id(i), None)) for i in folder.exclude_peers) or None if getattr(folder, "exclude_peers", None) else None,
+            pinned_peers=types.List(
+                types.Chat._parse_chat(
+                    client, peers.get(utils.get_input_peer_id(i), None)
+                )
+                for i in folder.pinned_peers
+            )
+            or None,
+            included_peers=types.List(
+                types.Chat._parse_chat(
+                    client, peers.get(utils.get_input_peer_id(i), None)
+                )
+                for i in folder.include_peers
+            )
+            or None,
+            excluded_peers=(
+                types.List(
+                    types.Chat._parse_chat(
+                        client, peers.get(utils.get_input_peer_id(i), None)
+                    )
+                    for i in folder.exclude_peers
+                )
+                or None
+                if getattr(folder, "exclude_peers", None)
+                else None
+            ),
             contacts=getattr(folder, "contacts", None),
             non_contacts=getattr(folder, "non_contacts", None),
             groups=getattr(folder, "groups", None),
@@ -131,7 +152,7 @@ class Folder(Object):
             exclude_archived=getattr(folder, "exclude_archived", None),
             emoji=folder.emoticon or None,
             has_my_invites=getattr(folder, "has_my_invites", None),
-            client=client
+            client=client,
         )
 
     async def delete(self):
@@ -154,7 +175,12 @@ class Folder(Object):
 
         return await self._client.delete_folder(self.id)
 
-    async def update_peers(self, pinned_peers: List[Union[int, str]], included_peers: List[Union[int, str]], excluded_peers: List[Union[int, str]]):
+    async def update_peers(
+        self,
+        pinned_peers: List[Union[int, str]],
+        included_peers: List[Union[int, str]],
+        excluded_peers: List[Union[int, str]],
+    ):
         """Bound method *update_peers* of :obj:`~pyrogram.types.Folder`.
 
         Use as a shortcut for:
@@ -186,7 +212,7 @@ class Folder(Object):
             exclude_muted=self.exclude_muted,
             exclude_read=self.exclude_read,
             exclude_archived=self.exclude_archived,
-            emoji=self.emoji
+            emoji=self.emoji,
         )
 
     async def pin_chat(self, chat_id: Union[int, str]):
@@ -208,9 +234,19 @@ class Folder(Object):
         """
 
         return await self.update_peers(
-            pinned_peers=[i.id for i in self.pinned_peers] if self.pinned_peers else [] + [chat_id],
-            included_peers=[i.id for i in self.included_peers] if self.included_peers else [] + [chat_id],
-            excluded_peers=[i.id for i in self.excluded_peers] if self.excluded_peers else [],
+            pinned_peers=(
+                [i.id for i in self.pinned_peers]
+                if self.pinned_peers
+                else [] + [chat_id]
+            ),
+            included_peers=(
+                [i.id for i in self.included_peers]
+                if self.included_peers
+                else [] + [chat_id]
+            ),
+            excluded_peers=(
+                [i.id for i in self.excluded_peers] if self.excluded_peers else []
+            ),
         )
 
     async def include_chat(self, chat_id: Union[int, str]):
@@ -233,8 +269,14 @@ class Folder(Object):
 
         return await self.update_peers(
             pinned_peers=[i.id for i in self.pinned_peers] if self.pinned_peers else [],
-            included_peers=[i.id for i in self.included_peers] if self.included_peers else [] + [chat_id],
-            excluded_peers=[i.id for i in self.excluded_peers] if self.excluded_peers else [],
+            included_peers=(
+                [i.id for i in self.included_peers]
+                if self.included_peers
+                else [] + [chat_id]
+            ),
+            excluded_peers=(
+                [i.id for i in self.excluded_peers] if self.excluded_peers else []
+            ),
         )
 
     async def exclude_chat(self, chat_id: Union[int, str]):
@@ -257,8 +299,14 @@ class Folder(Object):
 
         return await self.update_peers(
             pinned_peers=[i.id for i in self.pinned_peers] if self.pinned_peers else [],
-            included_peers=[i.id for i in self.included_peers] if self.included_peers else [],
-            excluded_peers=[i.id for i in self.excluded_peers] if self.excluded_peers else [] + [chat_id],
+            included_peers=(
+                [i.id for i in self.included_peers] if self.included_peers else []
+            ),
+            excluded_peers=(
+                [i.id for i in self.excluded_peers]
+                if self.excluded_peers
+                else [] + [chat_id]
+            ),
         )
 
     async def export_link(self):
@@ -279,6 +327,4 @@ class Folder(Object):
             ``str``: On success, a link to the folder as string is returned.
         """
 
-        return await self._client.export_folder_link(
-            folder_id=self.id
-        )
+        return await self._client.export_folder_link(folder_id=self.id)
