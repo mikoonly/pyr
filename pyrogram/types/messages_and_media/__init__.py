@@ -61,7 +61,7 @@ from .message_origin_channel import MessageOriginChannel
 from .message_origin_chat import MessageOriginChat
 from .message_origin_hidden_user import MessageOriginHiddenUser
 from .message_origin_user import MessageOriginUser
-from .message_import_info import MessageImportInfo
+from .message_origin_import import MessageOriginImport
 
 __all__ = [
     "Animation", "Audio", "BoostsStatus", "Contact", "Document", "ForumTopic", "ForumTopicCreated",
@@ -69,5 +69,5 @@ __all__ = [
     "GeneralTopicUnhidden", "Game", "Giveaway", "Location", "Message", "MessageEntity", "Photo", "Thumbnail",
     "StrippedThumbnail", "Story", "StoryDeleted", "StorySkipped", "StoryViews", "Poll", "PollOption", "Sticker", "StickerSet",
     "Venue", "Video", "VideoNote", "Voice", "WebPage", "Dice", "Reaction", "WebAppData",
-    "MessageReactions", "MessageStory", "MyBoost", "TranslatedText", "MessageImportInfo", "MessageOrigin", "MessageOriginChannel", "MessageOriginChat", "MessageOriginHiddenUser", "MessageOriginUser",
+    "MessageReactions", "MessageStory", "MyBoost", "TranslatedText", "MessageOriginImport", "MessageOrigin", "MessageOriginChannel", "MessageOriginChat", "MessageOriginHiddenUser", "MessageOriginUser",
 ]
