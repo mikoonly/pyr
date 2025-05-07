@@ -19,6 +19,7 @@
 from .advanced import Advanced
 from .auth import Auth
 from .bots import Bots
+from .calls import Calls
 from .chats import Chats
 from .contacts import Contacts
 from .decorators import Decorators
@@ -36,6 +37,7 @@ class Methods(
     Advanced,
     Auth,
     Bots,
+    Calls,
     Contacts,
     Password,
     Premium,
