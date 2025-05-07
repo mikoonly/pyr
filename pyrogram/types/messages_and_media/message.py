@@ -81,6 +81,9 @@ class Message(Object, Update):
         topics (:obj:`~pyrogram.types.ForumTopic`, *optional*):
             Topic the message belongs to.
 
+        forward_origin (:obj:`~pyrogram.types.MessageOrigin`, *optional*):
+                Information about the original message for forwarded messages
+
         forward_from (:obj:`~pyrogram.types.User`, *optional*):
             For forwarded messages, sender of the original message.
 
@@ -371,6 +374,7 @@ class Message(Object, Update):
         sender_chat: "types.Chat" = None,
         date: datetime = None,
         chat: "types.Chat" = None,
+        forward_origin: "types.MessageOrigin" = None,
         topics: "types.ForumTopic" = None,
         forward_from: "types.User" = None,
         forward_sender_name: str = None,
@@ -467,6 +471,7 @@ class Message(Object, Update):
         self.sender_chat = sender_chat
         self.date = date
         self.chat = chat
+        self.forward_origin = forward_origin
         self.topics = topics
         self.forward_from = forward_from
         self.forward_sender_name = forward_sender_name
@@ -565,6 +570,27 @@ class Message(Object, Update):
             return Message(id=message.id, empty=True, client=client)
 
         from_id = utils.get_raw_peer_id(message.from_id)
+
+        if isinstance(message, raw.types.MessageEmpty):
+            sender_chat = None
+            if peer_id:
+                if isinstance(message.peer_id, raw.types.PeerUser):
+                    sender_chat = types.Chat._parse_user_chat(client, users[peer_id])
+
+                elif isinstance(message.peer_id, raw.types.PeerChat):
+                    sender_chat = types.Chat._parse_chat_chat(client, chats[peer_id])
+
+                else:
+                    sender_chat = types.Chat._parse_channel_chat(client, chats[peer_id])
+
+            return Message(
+                id=message.id,
+                empty=True,
+                chat=sender_chat,
+                client=client,
+                _raw=message
+            )
+        
         peer_id = utils.get_raw_peer_id(message.peer_id)
         user_id = from_id or peer_id
 
@@ -772,11 +798,19 @@ class Message(Object, Update):
             forward_signature = None
             forward_date = None
             is_topic_message = None
+            forward_origin = None
+            forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
+
 
             forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
 
             if forward_header:
-                forward_date = utils.timestamp_to_datetime(forward_header.date)
+                forward_origin = types.MessageOrigin._parse(
+                    client,
+                    forward_header,
+                    users,
+                    chats,
+                    )
 
                 if forward_header.from_id:
                     raw_peer_id = utils.get_raw_peer_id(forward_header.from_id)
