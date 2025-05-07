@@ -19,7 +19,7 @@
 import logging
 from datetime import datetime
 from functools import partial
-from typing import List, Match, Union, BinaryIO, Optional, Callable
+from typing import List, Match, Union, BinaryIO, Optional, Callable, Dict
 
 import pyrogram
 from pyrogram import raw, enums
