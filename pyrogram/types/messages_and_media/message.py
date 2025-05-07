@@ -986,22 +986,14 @@ class Message(Object, Update):
                                 pass
                     else:
                         if message.reply_to.quote:
-                            quote_entities = [types.MessageEntity._parse(client, entity, users) for entity in message.reply_to.quote_entities]
-                            quote_entities = types.List(filter(lambda x: x is not None, quote_entities))
-
-                            parsed_message.quote = message.reply_to.quote
-                            parsed_message.quote_text = (
-                                Str(message.reply_to.quote_text).init(quote_entities) or None
-                                if media is None or web_page is not None
-                                else None
-                            )
-                            parsed_message.quote_entities = (
-                                quote_entities or None
-                                if media is None or web_page is not None
-                                else None
-                            )
-                        parsed_message.reply_to_message_id = message.reply_to.reply_to_msg_id
-                        parsed_message.reply_to_top_message_id = message.reply_to.reply_to_top_id
+                        parsed_message.quote = types.TextQuote._parse(
+                            client,
+                            users,
+                            message.reply_to
+                                )
+                        else:
+                            parsed_message.reply_to_message_id = message.reply_to.reply_to_msg_id
+                            parsed_message.reply_to_top_message_id = message.reply_to.reply_to_top_id
                 else:
                     parsed_message.reply_to_story_id = message.reply_to.story_id
                     parsed_message.reply_to_story_user_id = message.reply_to.user_id
