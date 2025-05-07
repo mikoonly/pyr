@@ -550,9 +550,9 @@ class Message(Object, Update):
     async def _parse(
         client: "pyrogram.Client",
         message: raw.base.Message,
-        users: Dict[int, "raw.types.User"],
-        chats: Dict[int, "raw.types.Chat"],
-        topics: Dict[int, "raw.types.ForumTopic"] = None,
+        users: dict,
+        chats: dict,
+        topics: dict = None,
         is_scheduled: bool = False,
         replies: int = 1,
     ):
