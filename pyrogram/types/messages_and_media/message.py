@@ -463,7 +463,7 @@ class Message(Object, Update):
             "types.ForceReply"
         ] = None,
         reactions: List["types.Reaction"] = None,
-        _raw = None
+        raw = "raw.types.Message" = None
     ):
         super().__init__(client)
 
@@ -556,44 +556,23 @@ class Message(Object, Update):
         self.web_app_data = web_app_data
         self.giveaway_launched = giveaway_launched
         self.reactions = reactions
-        self._raw = _raw
+        self.raw = raw
 
     @staticmethod
     async def _parse(
         client: "pyrogram.Client",
         message: raw.base.Message,
-        users: dict,
-        chats: dict,
-        topics: dict = None,
+        users: Dict[int, "raw.types.User"],
+        chats: Dict[int, "raw.types.Chat"],
+        topics: Dict[int, "raw.types.ForumTopic"] = None,
         is_scheduled: bool = False,
         replies: int = 1,
-        raw_reply_to_message: raw.base.Message = None
     ):
+
         if isinstance(message, raw.types.MessageEmpty):
-            return Message(id=message.id, empty=True, client=client)
+            return Message(id=message.id, empty=True, client=client, raw=message)
 
         from_id = utils.get_raw_peer_id(message.from_id)
-
-        if isinstance(message, raw.types.MessageEmpty):
-            sender_chat = None
-            if peer_id:
-                if isinstance(message.peer_id, raw.types.PeerUser):
-                    sender_chat = types.Chat._parse_user_chat(client, users[peer_id])
-
-                elif isinstance(message.peer_id, raw.types.PeerChat):
-                    sender_chat = types.Chat._parse_chat_chat(client, chats[peer_id])
-
-                else:
-                    sender_chat = types.Chat._parse_channel_chat(client, chats[peer_id])
-
-            return Message(
-                id=message.id,
-                empty=True,
-                chat=sender_chat,
-                client=client,
-                _raw=message
-            )
-        
         peer_id = utils.get_raw_peer_id(message.peer_id)
         user_id = from_id or peer_id
 
@@ -746,6 +725,7 @@ class Message(Object, Update):
                 video_chat_members_invited=video_chat_members_invited,
                 web_app_data=web_app_data,
                 giveaway_launched=giveaway_launched,
+                raw=message,
                 client=client
                 # TODO: supergroup_chat_created
             )
@@ -794,39 +774,18 @@ class Message(Object, Update):
             entities = [types.MessageEntity._parse(client, entity, users) for entity in message.entities]
             entities = types.List(filter(lambda x: x is not None, entities))
 
-            forward_from = None
-            forward_sender_name = None
-            forward_from_chat = None
-            forward_from_message_id = None
-            forward_signature = None
-            forward_date = None
             is_topic_message = None
+
+            forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
             forward_origin = None
-            forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
-
-
-            forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
 
             if forward_header:
                 forward_origin = types.MessageOrigin._parse(
-                    client,
-                    forward_header,
-                    users,
-                    chats,
-                    )
-
-                if forward_header.from_id:
-                    raw_peer_id = utils.get_raw_peer_id(forward_header.from_id)
-                    peer_id = utils.get_peer_id(forward_header.from_id)
-
-                    if peer_id > 0:
-                        forward_from = types.User._parse(client, users[raw_peer_id])
-                    else:
-                        forward_from_chat = types.Chat._parse_channel_chat(client, chats[raw_peer_id])
-                        forward_from_message_id = forward_header.channel_post
-                        forward_signature = forward_header.post_author
-                elif forward_header.from_name:
-                    forward_sender_name = forward_header.from_name
+                client,
+                forward_header,
+                users,
+                chats,
+                )
 
             photo = None
             location = None
@@ -987,6 +946,7 @@ class Message(Object, Update):
                 forward_signature=forward_signature,
                 forward_date=forward_date,
                 is_topic_message=is_topic_message,
+                forward_origin=forward_origin,
                 mentioned=message.mentioned,
                 scheduled=is_scheduled,
                 from_scheduled=message.from_scheduled,
@@ -1017,6 +977,7 @@ class Message(Object, Update):
                 outgoing=message.out,
                 reply_markup=reply_markup,
                 reactions=reactions,
+                raw=message,
                 client=client
             )
 
