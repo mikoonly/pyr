@@ -801,7 +801,7 @@ class Message(Object, Update):
                     photo = types.Photo._parse(client, media.photo, media.ttl_seconds)
                     media_type = enums.MessageMediaType.PHOTO
                     has_media_spoiler = media.spoiler
-                elif isinstance(media, raw.tpes.MessageMediaGeo):
+                elif isinstance(media, raw.types.MessageMediaGeo):
                     location = types.Location._parse(client, media.geo)
                     media_type = enums.MessageMediaType.LOCATION
                 elif isinstance(media, raw.types.MessageMediaContact):
