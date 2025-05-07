@@ -48,6 +48,8 @@ from .get_nearby_chats import GetNearbyChats
 from .get_send_as_chats import GetSendAsChats
 from .join_chat import JoinChat
 from .leave_chat import LeaveChat
+from .join_folder import JoinFolder
+from .leave_folder import LeaveFolder
 from .mark_chat_unread import MarkChatUnread
 from .pin_chat_message import PinChatMessage
 from .promote_chat_member import PromoteChatMember
@@ -75,6 +77,8 @@ class Chats(
     GetChat,
     LeaveChat,
     JoinChat,
+    JoinFolder,
+    LeaveFolder,
     BanChatMember,
     UnbanChatMember,
     RestrictChatMember,
