@@ -988,7 +988,7 @@ class Message(Object, Update):
                                 pass
                     else:
                         if message.reply_to.quote:
-                        parsed_message.quote = types.TextQuote._parse(
+                            parsed_message.quote = types.TextQuote._parse(
                             client,
                             users,
                             message.reply_to
