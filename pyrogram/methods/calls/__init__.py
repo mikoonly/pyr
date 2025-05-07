@@ -2,7 +2,7 @@ from .create_video_chat import CreateVideoChat
 from .discard_group_call import DiscardGroupCall
 
 
-class Calls:
+class Calls(
     CreateVideoChat,
     DiscardGroupCall,
 ):
