@@ -377,6 +377,7 @@ class Message(Object, Update):
         forward_origin: "types.MessageOrigin" = None,
         topics: "types.ForumTopic" = None,
         message_thread_id: int = None,
+        is_topic_message: bool = None,
         reply_to_message_id: int = None,
         reply_to_story_id: int = None,
         reply_to_story_user_id: int = None,
