@@ -463,6 +463,7 @@ class Message(Object, Update):
             "types.ForceReply"
         ] = None,
         reactions: List["types.Reaction"] = None
+        _raw = None
     ):
         super().__init__(client)
 
