@@ -555,6 +555,7 @@ class Message(Object, Update):
         self.web_app_data = web_app_data
         self.giveaway_launched = giveaway_launched
         self.reactions = reactions
+        self._raw = _raw
 
     @staticmethod
     async def _parse(
@@ -565,6 +566,7 @@ class Message(Object, Update):
         topics: dict = None,
         is_scheduled: bool = False,
         replies: int = 1
+        raw_reply_to_message: raw.base.Message = None
     ):
         if isinstance(message, raw.types.MessageEmpty):
             return Message(id=message.id, empty=True, client=client)
