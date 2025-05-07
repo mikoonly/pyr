@@ -17,4 +17,13 @@
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# from .message_origin import *
+from .object import Object
+from .list import List
+from .update import *
+from .authorization import *
+from .bots_and_keyboards import *
+from .inline_mode import *
+from .input_media import *
+from .input_message_content import *
+from .messages_and_media import *
+from .user_and_chats import *
