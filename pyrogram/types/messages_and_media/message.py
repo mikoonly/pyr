@@ -775,6 +775,13 @@ class Message(Object, Update):
             entities = types.List(filter(lambda x: x is not None, entities))
 
             is_topic_message = None
+            forward_from = None
+            forward_sender_name = None
+            forward_from_chat = None
+            forward_from_message_id = None
+            forward_signature = None
+            forward_date = None
+            is_topic_message = None
 
             forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
             forward_origin = None
