@@ -49,14 +49,14 @@ class TextQuote(Object):
         self, *,
         text: Optional[str] = None,
         entities: Optional[List["types.MessageEntity"]] = None,
-        position: Optional[int] = None,
+       # position: Optional[int] = None,
         is_manual: Optional[bool] = None
     ):
         super().__init__()
 
         self.text = text
         self.entities = entities
-        self.position = position
+      #  self.position = position
         self.is_manual = is_manual
 
     @staticmethod
@@ -79,6 +79,6 @@ class TextQuote(Object):
             return TextQuote(
                 text=Str(reply_to.quote_text).init(entities) or None,
                 entities=entities or None,
-                position=reply_to.quote_offset or 0,
+            #    position=reply_to.quote_offset or 0,
                 is_manual=reply_to.quote
             )
