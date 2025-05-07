@@ -376,13 +376,6 @@ class Message(Object, Update):
         chat: "types.Chat" = None,
         forward_origin: "types.MessageOrigin" = None,
         topics: "types.ForumTopic" = None,
-        forward_from: "types.User" = None,
-        forward_sender_name: str = None,
-        forward_from_chat: "types.Chat" = None,
-        forward_from_message_id: int = None,
-        forward_signature: str = None,
-        forward_date: datetime = None,
-        is_topic_message: bool = None,
         message_thread_id: int = None,
         reply_to_message_id: int = None,
         reply_to_story_id: int = None,
@@ -474,12 +467,6 @@ class Message(Object, Update):
         self.chat = chat
         self.forward_origin = forward_origin
         self.topics = topics
-        self.forward_from = forward_from
-        self.forward_sender_name = forward_sender_name
-        self.forward_from_chat = forward_from_chat
-        self.forward_from_message_id = forward_from_message_id
-        self.forward_signature = forward_signature
-        self.forward_date = forward_date
         self.is_topic_message = is_topic_message
         self.message_thread_id = message_thread_id
         self.reply_to_message_id = reply_to_message_id
@@ -775,14 +762,6 @@ class Message(Object, Update):
             entities = types.List(filter(lambda x: x is not None, entities))
 
             is_topic_message = None
-            forward_from = None
-            forward_sender_name = None
-            forward_from_chat = None
-            forward_from_message_id = None
-            forward_signature = None
-            forward_date = None
-            is_topic_message = None
-
             forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
             forward_origin = None
 
@@ -821,7 +800,7 @@ class Message(Object, Update):
                     photo = types.Photo._parse(client, media.photo, media.ttl_seconds)
                     media_type = enums.MessageMediaType.PHOTO
                     has_media_spoiler = media.spoiler
-                elif isinstance(media, raw.types.MessageMediaGeo):
+                elif isinstance(media, raw.tpes.MessageMediaGeo):
                     location = types.Location._parse(client, media.geo)
                     media_type = enums.MessageMediaType.LOCATION
                 elif isinstance(media, raw.types.MessageMediaContact):
@@ -946,12 +925,6 @@ class Message(Object, Update):
                 author_signature=message.post_author,
                 has_protected_content=message.noforwards,
                 has_media_spoiler=has_media_spoiler,
-                forward_from=forward_from,
-                forward_sender_name=forward_sender_name,
-                forward_from_chat=forward_from_chat,
-                forward_from_message_id=forward_from_message_id,
-                forward_signature=forward_signature,
-                forward_date=forward_date,
                 is_topic_message=is_topic_message,
                 forward_origin=forward_origin,
                 mentioned=message.mentioned,
