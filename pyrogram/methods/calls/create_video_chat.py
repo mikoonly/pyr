@@ -30,7 +30,7 @@ class CreateVideoChat:
         chat_id: Union[int, str],
         title: str = None,
         start_date: datetime = utils.zero_datetime(),
-        is_rtmp_stream: bool = None
+        #is_rtmp_stream: bool = None
     ) -> "types.Message":
         """Creates a video chat (a group call bound to a chat).
         
@@ -69,7 +69,7 @@ class CreateVideoChat:
 
         r = await self.invoke(
             raw.functions.phone.CreateGroupCall(
-                rtmp_stream=is_rtmp_stream,
+          #      rtmp_stream=is_rtmp_stream,
                 peer=peer,
                 # TODO: temp. workaround
                 random_id=self.rnd_id() >> 32,
