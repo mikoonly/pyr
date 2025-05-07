@@ -565,7 +565,7 @@ class Message(Object, Update):
         chats: dict,
         topics: dict = None,
         is_scheduled: bool = False,
-        replies: int = 1
+        replies: int = 1,
         raw_reply_to_message: raw.base.Message = None
     ):
         if isinstance(message, raw.types.MessageEmpty):
