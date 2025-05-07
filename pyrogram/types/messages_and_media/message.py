@@ -457,6 +457,7 @@ class Message(Object, Update):
             "types.ForceReply"
         ] = None,
         reactions: List["types.Reaction"] = None,
+        quote: "types.TextQuote" = None,
         raw: "raw.types.Message" = None
     ):
         super().__init__(client)
@@ -544,6 +545,7 @@ class Message(Object, Update):
         self.web_app_data = web_app_data
         self.giveaway_launched = giveaway_launched
         self.reactions = reactions
+        self.quote = quote
         self.raw = raw
 
     @staticmethod
