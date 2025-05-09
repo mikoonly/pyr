@@ -16,10 +16,13 @@
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
 
+from inspect import iscoroutinefunction
 from typing import Callable
+import pyrogram
+
+from pyrogram.types import Message, Identifier
 
 from .handler import Handler
-
 
 class MessageHandler(Handler):
     """The Message handler class. Used to handle new messages.
