@@ -32,7 +32,7 @@ from .poll_type import PollType
 from .sent_code_type import SentCodeType
 from .stories_privacy_rules import StoriesPrivacyRules
 from .user_status import UserStatus
-from listerner_types import ListeneeTypes
+from listerner_types import ListenerTypes
 
 __all__ = [
     "ChatAction",
