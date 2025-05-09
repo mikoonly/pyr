@@ -51,5 +51,5 @@ __all__ = [
     "StoriesPrivacyRules",
     "UserStatus",
     "MessageOriginType",
-    "ListernerTypes",
+    "ListenerTypes",
 ]
