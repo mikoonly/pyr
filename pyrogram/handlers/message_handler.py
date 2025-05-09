@@ -49,8 +49,8 @@ class MessageHandler(Handler):
     """
 
     def __init__(self, callback: Callable, filters=None):
-        super().__init__(callback, filters)
-
+        self.original_callback = callback
+        super().__init__(self.resolve_future_or_callback, filters)
 
     async def check_if_has_matching_listener(self, client: "pyrogram.Client", message: Message):
         """
