@@ -31,6 +31,7 @@ from .stickers import Stickers
 from .stories import Stories
 from .users import Users
 from .utilities import Utilities
+from .pyromod import Pyromod
 
 
 class Methods(
@@ -49,5 +50,6 @@ class Methods(
     Decorators,
     Utilities,
     InviteLinks,
+    Pyromod,
 ):
     pass
