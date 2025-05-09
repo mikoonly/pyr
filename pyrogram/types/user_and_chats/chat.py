@@ -457,7 +457,7 @@ class Chat(Object):
         else:
             return Chat._parse_channel_chat(client, chat)
 
-        def listen(self, *args, **kwargs):
+    def listen(self, *args, **kwargs):
         """Bound method *listen* of :obj:`~pyrogram.types.Chat`.
         
         Use as a shortcut for:
