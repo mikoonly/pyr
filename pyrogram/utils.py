@@ -26,6 +26,8 @@ from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime, timezone
 from getpass import getpass
 from typing import Dict, List, Optional, Union
+from types import SimpleNamespace
+
 
 import pyrogram
 from pyrogram import enums, raw, types
