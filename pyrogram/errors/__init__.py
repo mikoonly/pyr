@@ -15,15 +15,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
-EXCEPTION_AVAIL = False
-try:
-    from .exceptions import *
-except ImportError:
-    pass
-else:
-    EXCEPTION_AVAIL = True
 from .pyromod import *
-from .rpc_error import RPCError, UnknownError
+from .exceptions import *
+from .rpc_error import UnknownError
+
 
 class BadMsgNotification(Exception):
     descriptions = {
@@ -68,15 +63,3 @@ class CDNFileHashMismatch(SecurityError):
 
     def __init__(self, msg: str = None):
         super().__init__("A CDN file hash mismatch has occurred." if msg is None else msg)
-
-__all__ = [
-    "BadMsgNotification",
-    "SecurityError",
-    "SecurityCheckMismatch",
-    "CDNFileHashMismatch",
-    "RPCError",
-    "UnknownError"
-]
-if EXCEPTION_AVAIL:
-    __all__.extend(exceptions.__all__)
-__all__.extend(pyromod.__all__)
