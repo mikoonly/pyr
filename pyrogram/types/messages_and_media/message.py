@@ -416,7 +416,7 @@ class Message(Object, Update):
         contact: "types.Contact" = None,
         location: "types.Location" = None,
         venue: "types.Venue" = None,
-        web_page: "types.WebPage" = None,
+        #web_page: "types.WebPage" = None,
         poll: "types.Poll" = None,
         dice: "types.Dice" = None,
         new_chat_members: List["types.User"] = None,
@@ -449,6 +449,7 @@ class Message(Object, Update):
         video_chat_ended: "types.VideoChatEnded" = None,
         video_chat_members_invited: "types.VideoChatMembersInvited" = None,
         web_app_data: "types.WebAppData" = None,
+        web_page_preview: "types.WebPagePreview" = None,
         giveaway_launched: bool = None,
         reply_markup: Union[
             "types.InlineKeyboardMarkup",
@@ -509,7 +510,8 @@ class Message(Object, Update):
         self.contact = contact
         self.location = location
         self.venue = venue
-        self.web_page = web_page
+        #self.web_page = web_page
+        self.web_page_preview = web_page_preview
         self.poll = poll
         self.dice = dice
         self.new_chat_members = new_chat_members
