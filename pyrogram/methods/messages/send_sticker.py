@@ -20,7 +20,7 @@ import os
 import re
 from datetime import datetime
 from typing import BinaryIO, Callable, List, Optional, Union
-
+import io
 import pyrogram
 from pyrogram import StopTransmission, enums, raw, types, utils
 from pyrogram.errors import FilePartMissing
@@ -31,7 +31,7 @@ class SendSticker:
     async def send_sticker(
         self: "pyrogram.Client",
         chat_id: Union[int, str],
-        sticker: Union[str, BinaryIO],
+        sticker: Union[str, "io.BytesIO"],
         disable_notification: bool = None,
         message_thread_id: int = None,
         reply_to_message_id: int = None,
@@ -153,10 +153,12 @@ class SendSticker:
                         mime_type=self.guess_mime_type(sticker) or "image/webp",
                         file=file,
                         attributes=[
-                            raw.types.DocumentAttributeFilename(
-                                file_name=os.path.basename(sticker)
-                            )
-                        ],
+                            raw.types.DocumentAttributeFilename(file_name=os.path.basename(sticker)),
+                            raw.types.DocumentAttributeSticker(
+                                alt=emoji or "",
+                                stickerset=raw.types.InputStickerSetEmpty()
+                            ),
+                        ]
                     )
                 elif re.match("^https?://", sticker):
                     media = raw.types.InputMediaDocumentExternal(url=sticker)
