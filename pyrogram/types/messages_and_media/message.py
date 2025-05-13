@@ -416,7 +416,7 @@ class Message(Object, Update):
         contact: "types.Contact" = None,
         location: "types.Location" = None,
         venue: "types.Venue" = None,
-        #web_page: "types.WebPage" = None,
+        web_page: "types.WebPage" = None,
         poll: "types.Poll" = None,
         dice: "types.Dice" = None,
         new_chat_members: List["types.User"] = None,
@@ -510,7 +510,7 @@ class Message(Object, Update):
         self.contact = contact
         self.location = location
         self.venue = venue
-        #self.web_page = web_page
+        self.web_page = web_page
         self.web_page_preview = web_page_preview
         self.poll = poll
         self.dice = dice
@@ -826,6 +826,7 @@ class Message(Object, Update):
             sticker = None
             document = None
             web_page = None
+            web_page_preview = None
             poll = None
             dice = None
 
@@ -921,15 +922,9 @@ class Message(Object, Update):
                             document = types.Document._parse(client, doc, file_name)
                             media_type = enums.MessageMediaType.DOCUMENT
                 elif isinstance(media, raw.types.MessageMediaWebPage):
-                    if isinstance(media.webpage, raw.types.WebPage):
-                        web_page = types.WebPage._parse(
-                            client,
-                            media.webpage,
-                            media.force_large_media,
-                            media.force_small_media,
-                            media.manual,
-                        )
-                        media_type = enums.MessageMediaType.WEB_PAGE
+                    if isinstance(media.webpage, raw.types.WebPage) or isinstance(media.webpage, raw.types.WebPageEmpty):
+                        web_page_preview = types.WebPagePreview._parse(client, media, message.invert_media)
+                        media_type = enums.MessageMediaType.WEB_PAGE_PREVIEW
                     else:
                         media = None
                 elif isinstance(media, raw.types.MessageMediaPoll):
@@ -1014,7 +1009,7 @@ class Message(Object, Update):
                 video_note=video_note,
                 sticker=sticker,
                 document=document,
-                web_page=web_page,
+                web_page_preview=web_page_preview,
                 poll=poll,
                 dice=dice,
                 views=message.views,
