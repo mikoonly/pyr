@@ -63,6 +63,8 @@ from .video_note import VideoNote
 from .voice import Voice
 from .web_app_data import WebAppData
 from .web_page import WebPage
+from .web_page_empty import WebPageEmpty
+from .web_page_preview import WebPagePreview
 
 __all__ = [
     "Animation",
@@ -112,4 +114,6 @@ __all__ = [
     "MessageOriginHiddenUser",
     "MessageOriginUser",
     "TextQuote",
+    "WebPageEmpty",
+    "WebPagePreview"
 ]
