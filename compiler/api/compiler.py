@@ -22,7 +22,7 @@ import re
 import shutil
 from functools import partial
 from pathlib import Path
-from typing import NamedTuple, List, Tuple
+from typing import NamedTuple
 
 # from autoflake import fix_code
 # from black import format_str, FileMode
@@ -64,11 +64,15 @@ try:
     with open("docs.json") as f:
         docs = json.load(f)
 except FileNotFoundError:
-    docs = {
-        "type": {},
-        "constructor": {},
-        "method": {}
-    }
+    try:
+        with open(HOME_PATH / "docs.json") as f:
+            docs = json.load(f)
+    except FileNotFoundError:
+        docs = {
+            "type": {},
+            "constructor": {},
+            "method": {}
+        }
 
 
 class Combinator(NamedTuple):
@@ -78,7 +82,7 @@ class Combinator(NamedTuple):
     name: str
     id: str
     has_flags: bool
-    args: List[Tuple[str, str]]
+    args: list[tuple[str, str]]
     qualtype: str
     typespace: str
     type: str
@@ -123,7 +127,7 @@ def get_type_hint(type: str) -> str:
         is_core = True
 
         sub_type = type.split("<")[1][:-1]
-        type = f"List[{get_type_hint(sub_type)}]"
+        type = f"list[{get_type_hint(sub_type)}]"
 
     if is_core:
         return f"Optional[{type}] = None" if is_flag else type
@@ -258,10 +262,13 @@ def start(format: bool = False):
 
             args = ARGS_RE.findall(line)
 
-            # Fix arg name being "self" (reserved python keyword)
+            # Fix arg name being reserved python keyword
             for i, item in enumerate(args):
-                if item[0] == "self":
-                    args[i] = ("is_self", item[1])
+                if item[0] in [
+                    "self",
+                    "from",
+                ]:
+                    args[i] = (f"is_{item[0]}", item[1])
 
             combinator = Combinator(
                 section=section,
