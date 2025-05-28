@@ -398,6 +398,7 @@ class Message(Object, Update):
         has_media_spoiler: bool = None,
         text: Str = None,
         quote_text: Str = None,
+        effect_id: str = None,
         entities: List["types.MessageEntity"] = None,
         caption_entities: List["types.MessageEntity"] = None,
         quote_entities: List["types.MessageEntity"] = None,
@@ -470,6 +471,7 @@ class Message(Object, Update):
         self.chat = chat
         self.forward_origin = forward_origin
         self.topics = topics
+        self.effect_id = effect_id
         self.is_topic_message = is_topic_message
         self.message_thread_id = message_thread_id
         self.reply_to_message_id = reply_to_message_id
