@@ -18,6 +18,7 @@
 
 from .animation import Animation
 from .audio import Audio
+from .available_effect import AvailableEffect
 from .boosts_status import BoostsStatus
 from .contact import Contact
 from .dice import Dice
@@ -114,6 +115,7 @@ __all__ = [
     "MessageOriginHiddenUser",
     "MessageOriginUser",
     "TextQuote",
+    "AvailableEffect",
     "WebPageEmpty",
     "WebPagePreview"
 ]
