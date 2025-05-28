@@ -1020,6 +1020,7 @@ class Message(Object, Update):
                 outgoing=message.out,
                 reply_markup=reply_markup,
                 reactions=reactions,
+                effect_id=getattr(message, "effect", None),
                 raw=message,
                 client=client,
             )
@@ -1145,6 +1146,10 @@ class Message(Object, Update):
         else:
             return f"https://t.me/c/{utils.get_channel_id(self.chat.id)}/{self.id}"
 
+    @property
+    def content(self) -> str:
+        return self.text or self.caption or Str("").init([])
+    
     async def get_media_group(self) -> List["types.Message"]:
         """Bound method *get_media_group* of :obj:`~pyrogram.types.Message`.
 
@@ -1187,6 +1192,8 @@ class Message(Object, Update):
         quote_entities: List["types.MessageEntity"] = None,
         schedule_date: datetime = None,
         protect_content: bool = None,
+        message_effect_id: int = None,
+        invert_media: bool = None,
         reply_markup=None,
     ) -> "Message":
         """Bound method *reply_text* of :obj:`~pyrogram.types.Message`.
@@ -1277,6 +1284,8 @@ class Message(Object, Update):
             quote_text=quote_text,
             quote_entities=quote_entities,
             schedule_date=schedule_date,
+            message_effect_id=message_effect_id,
+            invert_media=invert_media,
             protect_content=protect_content,
             reply_markup=reply_markup,
         )
@@ -1296,6 +1305,7 @@ class Message(Object, Update):
         height: int = 0,
         thumb: str = None,
         disable_notification: bool = None,
+        invert_media: bool = None,
         reply_markup: Union[
             "types.InlineKeyboardMarkup",
             "types.ReplyKeyboardMarkup",
@@ -1305,6 +1315,7 @@ class Message(Object, Update):
         message_thread_id: int = None,
         reply_to_message_id: int = None,
         quote_text: str = None,
+        message_effect_id: int = None,
         quote_entities: List["types.MessageEntity"] = None,
         progress: Callable = None,
         progress_args: tuple = (),
@@ -1435,6 +1446,8 @@ class Message(Object, Update):
             disable_notification=disable_notification,
             message_thread_id=message_thread_id,
             reply_to_message_id=reply_to_message_id,
+            message_effect_id=message_effect_id,
+            invert_media=invert_media,
             quote_text=quote_text,
             quote_entities=quote_entities,
             reply_markup=reply_markup,
@@ -1458,6 +1471,7 @@ class Message(Object, Update):
         reply_to_message_id: int = None,
         quote_text: str = None,
         quote_entities: List["types.MessageEntity"] = None,
+        message_effect_id: int = None,
         reply_markup: Union[
             "types.InlineKeyboardMarkup",
             "types.ReplyKeyboardMarkup",
@@ -1591,6 +1605,7 @@ class Message(Object, Update):
             reply_to_message_id=reply_to_message_id,
             quote_text=quote_text,
             quote_entities=quote_entities,
+            message_effect_id=message_effect_id,
             reply_markup=reply_markup,
             progress=progress,
             progress_args=progress_args,
@@ -1850,6 +1865,7 @@ class Message(Object, Update):
         disable_notification: bool = None,
         message_thread_id: int = None,
         reply_to_message_id: int = None,
+        message_effect_id: int = None,
         quote_text: str = None,
         quote_entities: List["types.MessageEntity"] = None,
         schedule_date: datetime = None,
@@ -1992,6 +2008,7 @@ class Message(Object, Update):
             reply_to_message_id=reply_to_message_id,
             quote_text=quote_text,
             quote_entities=quote_entities,
+            message_effect_id=message_effect_id,
             schedule_date=schedule_date,
             reply_markup=reply_markup,
             progress=progress,
