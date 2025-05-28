@@ -389,7 +389,7 @@ class Chat(Object):
 
             parsed_chat = Chat._parse_user_chat(client, users[full_user.id])
             parsed_chat.bio = full_user.about
-
+            parsed_chat.birthday = types.Birthday._parse(getattr(full_user, "birthday", None))
             if full_user.pinned_msg_id:
                 parsed_chat.pinned_message = await client.get_messages(
                     parsed_chat.id, message_ids=full_user.pinned_msg_id
