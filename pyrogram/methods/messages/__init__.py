@@ -121,7 +121,7 @@ class Messages(
     SendReaction,
     GetDiscussionReplies,
     GetDiscussionRepliesCount,
-    GetAvailableEffects
+    GetAvailableEffects,
     StreamMedia,
     TranslateText,
     GetCustomEmojiStickers,
