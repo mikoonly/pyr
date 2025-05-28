@@ -39,6 +39,8 @@ class SendMessage:
         quote_text: str = None,
         quote_entities: List["types.MessageEntity"] = None,
         schedule_date: datetime = None,
+        invert_media: bool = None,
+        message_effect_id: int = None,
         protect_content: bool = None,
         reply_markup: Union[
             "types.InlineKeyboardMarkup",
@@ -175,6 +177,8 @@ class SendMessage:
                 message=message,
                 entities=entities,
                 noforwards=protect_content,
+                invert_media=invert_media,
+                effect=message_effect_id,
             )
         )
 
