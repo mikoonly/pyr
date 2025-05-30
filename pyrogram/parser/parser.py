@@ -20,7 +20,6 @@ from typing import Optional
 
 import pyrogram
 from pyrogram import enums
-
 from .html import HTML
 from .markdown import Markdown
 
