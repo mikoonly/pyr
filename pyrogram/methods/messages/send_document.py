@@ -45,6 +45,7 @@ class SendDocument:
         reply_to_story_id: int = None,
         quote_text: str = None,
         quote_entities: List["types.MessageEntity"] = None,
+        message_effect_id: int = None,
         schedule_date: datetime = None,
         protect_content: bool = None,
         reply_markup: Union[
@@ -244,6 +245,7 @@ class SendDocument:
                             random_id=self.rnd_id(),
                             schedule_date=utils.datetime_to_timestamp(schedule_date),
                             noforwards=protect_content,
+                            effect=message_effect_id,
                             reply_markup=(
                                 await reply_markup.write(self) if reply_markup else None
                             ),
